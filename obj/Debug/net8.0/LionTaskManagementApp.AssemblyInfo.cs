@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LionTaskManagementApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ef530d0bb59e069806cbf76dca7116e502b9968f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7dc015e8c6caa459a7d103b477939f63c071468b")]
 [assembly: System.Reflection.AssemblyProductAttribute("LionTaskManagementApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LionTaskManagementApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
