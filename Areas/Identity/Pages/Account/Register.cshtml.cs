@@ -136,6 +136,21 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        // Access error.ErrorMessage to see the specific validation error
+                        Console.WriteLine($"Error: {error.ErrorMessage}"); 
+
+                        // You can also inspect error.Exception if an exception was thrown
+                    }
+                }
+            }
+            
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
