@@ -21,11 +21,13 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<TaskUser> _signInManager;
+        private readonly UserManager<TaskUser> _userManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<TaskUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<TaskUser> signInManager, UserManager<TaskUser> userManager, ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
             _logger = logger;
         }
 
@@ -116,6 +118,12 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var roles = await _userManager.GetRolesAsync(user); 
+                    // if(roles.IndexOf("Poster") == -1) {
+                    
+                    // }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -1,6 +1,7 @@
-﻿using LionTaskManagementApp.Areas.Identity.Data;
+using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using LionTaskManagementApp.Models;
 
 namespace LionTaskManagementApp.Data;
 
@@ -10,4 +11,6 @@ public class ApplicationDbContext : IdentityDbContext<TaskUser>
         : base(options)
     {
     }
+
+    public DbSet<LionTaskManagementApp.Models.TaskModel> Task { get; set; } = default!;
 }

@@ -2,23 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading;
-using System.Threading.Tasks;
 using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 
 namespace LionTaskManagementApp.Areas.Identity.Pages.Account
 {
@@ -158,7 +151,6 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                 user.DOB = Input.DOB.ToUniversalTime();
                 user.PhoneNumber = Input.PhoneNumber;
                 user.Location = Input.Location;
-                // Role is not assigned yet.
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -167,8 +159,9 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
-                    var userId = await _userManager.GetUserIdAsync(user);
+                    var storedUser = await _userManager.FindByEmailAsync(Input.Email);
+                    var userId = storedUser.Id;
+                    await _userManager.AddToRoleAsync(user, Input.Role); 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(
