@@ -65,7 +65,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account.Manage
             [Required]
             [Display(Name = "Birth Date")]
             [DataType(DataType.Date)]
-            public DateTime DOB { get; set; }
+            public DateTimeOffset DOB { get; set; }
 
             [Phone]
             [Display(Name = "Phone number")]

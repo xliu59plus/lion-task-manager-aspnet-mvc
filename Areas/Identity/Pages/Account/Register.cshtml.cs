@@ -88,7 +88,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Birth Date")]
             [DataType(DataType.Date)]
-            public DateTime DOB { get; set; }
+            public DateTimeOffset DOB { get; set; }
 
             [Required]
             [Display(Name = "Phone Number")]
@@ -155,7 +155,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
                 user.Name = Input.Name;
-                user.DOB = Input.DOB;
+                user.DOB = Input.DOB.ToUniversalTime();
                 user.PhoneNumber = Input.PhoneNumber;
                 user.Location = Input.Location;
                 // Role is not assigned yet.

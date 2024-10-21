@@ -5,7 +5,7 @@
 namespace LionTaskManagementApp.Migrations
 {
     /// <inheritdoc />
-    public partial class CustomUserData : Migration
+    public partial class DateTypeConvert : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
