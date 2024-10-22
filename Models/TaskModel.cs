@@ -17,10 +17,10 @@ public class TaskModel
     public string Description { get; set; } = string.Empty;
 
     [Required]
-    public float length {get; set;} = 0;
+    public float Length {get; set;} = 0;
 
     [Required]
-    public float height {get; set;} = 0;
+    public float Height {get; set;} = 0;
 
     public string? DeniedList { get; set; }
 

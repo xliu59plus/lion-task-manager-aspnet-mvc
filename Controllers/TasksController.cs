@@ -68,7 +68,7 @@ namespace LionTaskManagementApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles="Poster,Admin")]
-        public async Task<IActionResult> Create([Bind("OwnerId,Title,Description,length,height,Location")] TaskModel taskModel)
+        public async Task<IActionResult> Create([Bind("OwnerId,Title,Description,Length,Height,Location")] TaskModel taskModel)
         {
             ModelState.Remove("Status");
             if (!ModelState.IsValid)
@@ -126,7 +126,7 @@ namespace LionTaskManagementApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles="Poster,Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OwnerId,Title,Description,length,height,DeniedList,Status,Location,TakenById,CreatedTime")] TaskModel taskModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OwnerId,Title,Description,Length,Height,DeniedList,Status,Location,TakenById,CreatedTime")] TaskModel taskModel)
         {
             if (id != taskModel.Id)
             {
