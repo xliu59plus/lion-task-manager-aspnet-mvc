@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LionTaskManagementApp.Data;
 using LionTaskManagementApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -23,6 +24,16 @@ namespace LionTaskManagementApp.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Task.ToListAsync());
+        }
+
+        [Authorize(Roles="Poster,Admin")]
+        public async Task<IActionResult> PosterIndex()
+        {
+            var currentUserId = User.Identity?.Name;
+            var userTasks = await _context.Task
+                                  .Where(t => t.OwnerId == currentUserId)
+                                  .ToListAsync();
+            return View(userTasks);
         }
 
         // GET: Tasks/Details/5
@@ -43,6 +54,7 @@ namespace LionTaskManagementApp.Controllers
             return View(taskModel);
         }
 
+        [Authorize(Roles="Poster,Admin")]
         // GET: Tasks/Create
         public IActionResult Create()
         {
@@ -52,19 +64,45 @@ namespace LionTaskManagementApp.Controllers
         // POST: Tasks/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OwnerId,Title,Description,length,height,DeniedList,Status,Location,TakenById,CreatedTime")] TaskModel taskModel)
+        [Authorize(Roles="Poster,Admin")]
+        public async Task<IActionResult> Create([Bind("OwnerId,Title,Description,length,height,Location")] TaskModel taskModel)
         {
+            ModelState.Remove("Status");
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        // Access error.ErrorMessage to see the specific validation error
+                        Console.WriteLine($"Error: {error.ErrorMessage}"); 
+
+                        // You can also inspect error.Exception if an exception was thrown
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
+                taskModel.Status = "Initialized";  // Set default status
+                taskModel.DeniedList = null;  // Initialize DeniedList if it's required to be non-null
+                taskModel.TakenById = null;  // Set TakenById to null or another default value
+                taskModel.CreatedTime = DateTimeOffset.UtcNow;  // Set the current timestamp for CreatedTime
+
+                // Add the task to the context and save changes
                 _context.Add(taskModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(PosterIndex));
             }
-            return View(taskModel);
-        }
 
+            return View(taskModel);
+        }   
+
+
+        [Authorize(Roles="Poster,Admin")]
         // GET: Tasks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -81,11 +119,13 @@ namespace LionTaskManagementApp.Controllers
             return View(taskModel);
         }
 
+
         // POST: Tasks/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles="Poster,Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,OwnerId,Title,Description,length,height,DeniedList,Status,Location,TakenById,CreatedTime")] TaskModel taskModel)
         {
             if (id != taskModel.Id)
@@ -117,6 +157,7 @@ namespace LionTaskManagementApp.Controllers
         }
 
         // GET: Tasks/Delete/5
+        [Authorize(Roles="Poster,Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,6 +178,7 @@ namespace LionTaskManagementApp.Controllers
         // POST: Tasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles="Poster,Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var taskModel = await _context.Task.FindAsync(id);

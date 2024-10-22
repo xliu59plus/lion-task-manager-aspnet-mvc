@@ -120,9 +120,13 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var roles = await _userManager.GetRolesAsync(user); 
-                    // if(roles.IndexOf("Poster") == -1) {
-                    
-                    // }
+                    if(roles.IndexOf("Poster") != -1) {
+                        returnUrl = Url.Action("PosterIndex", "Tasks");
+                        Console.WriteLine("Login as Poster");
+                    } else if(roles.IndexOf("Taker") != -1) {
+                        returnUrl = Url.Action("TakerIndex", "Tasks");
+                        Console.WriteLine("Login as Taker");
+                    }
 
                     return LocalRedirect(returnUrl);
                 }

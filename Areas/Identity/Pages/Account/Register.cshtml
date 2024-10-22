@@ -37,13 +37,23 @@
                 <label asp-for="Input.Location"></label>
                 @* <span asp-validation-for="Input.DOB" class="text-danger"></span> *@
             </div>
-            <div class="form-floating">
-                <select asp-for="Input.Role" class="form-control">
-                    <option value="Poster">Task Poster</option>
-                    <option value="Taker">Task Taker</option>
-                </select>
-                <label asp-for="Input.Role"></label> 
+            <div class="form-group">
+                <!-- Role Label -->
+                <label asp-for="Input.Role" class="form-label">Role</label>
+
+                <!-- Task Poster Radio Button -->
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" asp-for="Input.Role" value="Poster" id="Poster" />
+                    <label class="form-check-label" for="Poster">Poster (Become a user that will post tasks)</label>
+                </div>
+
+                <!-- Task Taker Radio Button -->
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" asp-for="Input.Role" value="Taker" id="Taker" />
+                    <label class="form-check-label" for="Taker">Task (Become a user that will resolve tasks)</label>
+                </div>
             </div>
+
             <div class="form-floating mb-3">
                 <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label asp-for="Input.Password">Password</label>

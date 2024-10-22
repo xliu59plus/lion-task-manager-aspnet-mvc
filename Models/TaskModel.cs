@@ -22,7 +22,7 @@ public class TaskModel
     [Required]
     public float height {get; set;} = 0;
 
-    public string DeniedList { get; set; } = string.Empty;
+    public string? DeniedList { get; set; }
 
     [Required]
     public string Status { get; set; } = string.Empty;
@@ -30,7 +30,7 @@ public class TaskModel
     [Required]
     public string Location { get; set; } = string.Empty;
 
-    public string TakenById { get; set; } = string.Empty;
+    public string? TakenById { get; set; }
 
     [Required]
     public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.MinValue;
