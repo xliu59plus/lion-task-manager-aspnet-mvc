@@ -28,4 +28,25 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    // This is the "View My Task" function
+    public IActionResult ViewMyTask()
+    {
+        // Check if the user has the role "Poster"
+        if (User.IsInRole("Poster"))
+        {
+            // Redirect to the PosterIndex in TasksController
+            return RedirectToAction("PosterIndex", "Tasks");
+        }
+
+        // Check if the user has the role "Taker"
+        if (User.IsInRole("Taker"))
+        {
+            // Redirect to the TakerIndex in TasksController
+            return RedirectToAction("TakerIndex", "Tasks");
+        }
+
+        // If the user doesn't have either role, redirect to the homepage or access denied
+        return RedirectToAction("Index", "Home");
+    }
 }

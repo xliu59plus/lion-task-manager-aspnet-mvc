@@ -5,4 +5,10 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <h3 class="display-6">Vertical Printer Can be Hired Anywhere</h2>
+
+    @if (User != null && User.Identity != null &&User.Identity.IsAuthenticated && (User.IsInRole("Poster") || User.IsInRole("Taker")))
+    {
+        <!-- Show "My Tasks" button if the user is logged in and has the "Poster" or "Taker" role -->
+        <a href="@Url.Action("Index", "Tasks")" class="btn btn-primary mt-4">My Tasks</a>
+    }
 </div>
