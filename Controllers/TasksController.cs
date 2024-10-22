@@ -106,6 +106,26 @@ namespace LionTaskManagementApp.Controllers
         // GET: Tasks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            Console.WriteLine("general editor hit");
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var taskModel = await _context.Task.FindAsync(id);
+            if (taskModel == null)
+            {
+                return NotFound();
+            }
+            return View(taskModel);
+        }
+
+        [Authorize(Roles="Poster,Admin")]
+        // GET: Tasks/PosterEdit/5
+        public async Task<IActionResult> PosterEdit(int? id)
+        {
+            Console.WriteLine("poster editor hit");
             if (id == null)
             {
                 return NotFound();
@@ -153,6 +173,70 @@ namespace LionTaskManagementApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            return View(taskModel);
+        }
+
+        // POST: Tasks/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles="Poster,Admin")]
+        public async Task<IActionResult> PosterEdit(int id, [Bind("Id,Title,Description,Length,Height,Location")] TaskModel taskModel)
+        {
+            ModelState.Remove("Status");
+            ModelState.Remove("OwnerId");
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        // Access error.ErrorMessage to see the specific validation error
+                        Console.WriteLine($"Error: {error.ErrorMessage}"); 
+
+                        // You can also inspect error.Exception if an exception was thrown
+                    }
+                }
+            }
+
+            if (id != taskModel.Id)
+            {
+                return NotFound();
+            }
+
+            var persistedTaskModel = await _context.Task.FindAsync(id);
+            if(persistedTaskModel == null) {
+                return NotFound();
+            }
+
+            persistedTaskModel.Title = taskModel.Title;
+            persistedTaskModel.Length = taskModel.Length;
+            persistedTaskModel.Height = taskModel.Height;
+            persistedTaskModel.Location = taskModel.Location;
+            persistedTaskModel.Description = taskModel.Description;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(persistedTaskModel);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                    if (!TaskModelExists(persistedTaskModel.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(PosterIndex));
+            }
+
             return View(taskModel);
         }
 
