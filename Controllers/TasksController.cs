@@ -54,6 +54,24 @@ namespace LionTaskManagementApp.Controllers
             return View(taskModel);
         }
 
+        // GET: Tasks/Details/5
+        public async Task<IActionResult> PosterDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var taskModel = await _context.Task
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (taskModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(taskModel);
+        }
+
         [Authorize(Roles="Poster,Admin")]
         // GET: Tasks/Create
         public IActionResult Create()
@@ -259,6 +277,25 @@ namespace LionTaskManagementApp.Controllers
             return View(taskModel);
         }
 
+        // GET: Tasks/Delete/5
+        [Authorize(Roles="Poster,Admin")]
+        public async Task<IActionResult> PosterDelete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var taskModel = await _context.Task
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (taskModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(taskModel);
+        }
+
         // POST: Tasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -273,6 +310,22 @@ namespace LionTaskManagementApp.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Tasks/PosterDeleteConfirmedDelete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles="Poster,Admin")]
+        public async Task<IActionResult> PosterDeleteConfirmed(int id)
+        {
+            var taskModel = await _context.Task.FindAsync(id);
+            if (taskModel != null)
+            {
+                _context.Task.Remove(taskModel);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(PosterIndex));
         }
 
         private bool TaskModelExists(int id)

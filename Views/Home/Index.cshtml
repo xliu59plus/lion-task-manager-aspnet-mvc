@@ -9,6 +9,6 @@
     @if (User != null && User.Identity != null &&User.Identity.IsAuthenticated && (User.IsInRole("Poster") || User.IsInRole("Taker")))
     {
         <!-- Show "My Tasks" button if the user is logged in and has the "Poster" or "Taker" role -->
-        <a href="@Url.Action("Index", "Tasks")" class="btn btn-primary mt-4">My Tasks</a>
+        <a href="@Url.Action("ViewMyTask", "Home")" class="btn btn-primary mt-4">My Tasks</a>
     }
 </div>
