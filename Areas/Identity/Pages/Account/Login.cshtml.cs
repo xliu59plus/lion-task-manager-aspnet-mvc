@@ -124,7 +124,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                         returnUrl = Url.Action("PosterIndex", "Tasks");
                         Console.WriteLine("Login as Poster");
                     } else if(roles.IndexOf("Taker") != -1) {
-                        returnUrl = Url.Action("TakerIndex", "Tasks");
+                        returnUrl = Url.Action("TakerIndex", "Taker");
                         Console.WriteLine("Login as Taker");
                     }
 

@@ -1,0 +1,68 @@
+@model LionTaskManagementApp.Models.TaskModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Task Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Length) (inch)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Length)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Height) (inch)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Height)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedTime)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreatedTime)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="TakerIndex">Back to List</a>
+</div>
+
+<div class="mt-3">
+    <!-- "Pick" button that redirects to RequestTask action in Taker controller -->
+    <a asp-action="RequestTask" asp-controller="Taker" asp-route-id="@Model?.Id" class="btn btn-success">Pick</a>
+
+    <!-- "Not Interested" button that redirects to NotInterest action in Taker controller -->
+    <a asp-action="NotInterest" asp-controller="Taker" asp-route-id="@Model?.Id" class="btn btn-secondary">Not Interested</a>
+</div>
+

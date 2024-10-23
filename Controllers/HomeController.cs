@@ -43,7 +43,7 @@ public class HomeController : Controller
         if (User.IsInRole("Taker"))
         {
             // Redirect to the TakerIndex in TasksController
-            return RedirectToAction("TakerIndex", "Tasks");
+            return RedirectToAction("TakerIndex", "Taker");
         }
 
         // If the user doesn't have either role, redirect to the homepage or access denied
