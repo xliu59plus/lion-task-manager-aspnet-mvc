@@ -79,19 +79,9 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
             public string Name { get; set; }
 
             [Required]
-            [Display(Name = "Birth Date")]
-            [DataType(DataType.Date)]
-            public DateTimeOffset DOB { get; set; }
-
-            [Required]
             [Display(Name = "Phone Number")]
             [DataType(DataType.Text)]
             public string PhoneNumber { get; set; }
-
-            [Required]
-            [Display(Name = "Location")]
-            [DataType(DataType.Text)]
-            public string Location { get; set; }
 
             [Required]
             [Display(Name = "Role")]
@@ -148,9 +138,9 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
                 user.Name = Input.Name;
-                user.DOB = Input.DOB.ToUniversalTime();
+                // user.DOB = Input.DOB.ToUniversalTime();
                 user.PhoneNumber = Input.PhoneNumber;
-                user.Location = Input.Location;
+                // user.Location = Input.Location;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

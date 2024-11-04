@@ -12,5 +12,6 @@ public class ApplicationDbContext : IdentityDbContext<TaskUser>
     {
     }
 
-    public DbSet<LionTaskManagementApp.Models.TaskModel> Task { get; set; } = default!;
+    public DbSet<TaskModel> Tasks { get; set; } = default!;
+    public DbSet<ContractorInfo> ContractorInfos { get; set; }
 }

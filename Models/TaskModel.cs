@@ -22,7 +22,9 @@ public class TaskModel
     [Required]
     public float Height {get; set;} = 0;
 
-    public string? DeniedList { get; set; }
+    public string DeniedList { get; set; } = string.Empty;
+
+    public string RequestList { get; set; } = string.Empty;
 
     [Required]
     public string Status { get; set; } = string.Empty;

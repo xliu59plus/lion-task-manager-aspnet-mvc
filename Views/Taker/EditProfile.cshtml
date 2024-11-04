@@ -1,0 +1,127 @@
+@using LionTaskManagementApp.Models
+@model ContractorInfoViewModel // Create a view model
+<h2>Edit Profile (Taker)</h2>
+
+<form asp-action="EditProfileTaker" method="post">
+    <div class="form-group">
+        <label asp-for="PricePerSquareFoot">Price Per Square Foot:</label>
+        <input asp-for="PricePerSquareFoot" class="form-control" />
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="PreferenceDistance">Preference Distance:</label>
+        <input asp-for="PreferenceDistance" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FullAddress">Address:</label> 
+        <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address"/> 
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FirstLine">Address Line 1:</label>
+        <input asp-for="FirstLine" class="form-control" id="firstLine" readonly/>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SecondLine">Address Line 2:</label>
+        <input asp-for="SecondLine" class="form-control" id="secondLine" />
+    </div>
+    <div class="form-group">
+        <label asp-for="StateProvince">State/Province:</label>
+        <input asp-for="StateProvince" class="form-control" id="stateProvince" readonly/>
+    </div>
+    <div class="form-group">
+        <label asp-for="City">City:</label>
+        <input asp-for="City" class="form-control" id="city" readonly/>
+    </div>
+    <div class="form-group">
+        <label asp-for="ZipCode">Zip Code:</label>
+        <input asp-for="ZipCode" class="form-control" id="zipCode" readonly/>
+    </div>
+
+    <input type="hidden" asp-for="LatAndLongitude" id="LatAndLongitude" readonly/>
+
+    <button type="submit" class="btn btn-primary">Submit</button> 
+</form>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
+
+<div id="map" style="height: 400px; width: 100%;"></div>
+
+
+<script>
+    let map;
+    let marker;
+    function initMap() {
+        // Initialize the map (you might want to center it based on user's location or a default)
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: -34.397, lng: 150.644 }, // Default location
+            zoom: 8
+        });
+
+        // Autocomplete for the address input
+        var input = document.getElementById('addressInput');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                console.log("Autocomplete's returned place contains no geometry");
+                return;
+            }
+
+            // Get latitude and longitude
+            var lat = place.geometry.location.lat();
+            var lng = place.geometry.location.lng();
+            document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
+
+            // Populate address components
+            var addressComponents = place.address_components;
+            for (var i = 0; i < addressComponents.length; i++) {
+                var component = addressComponents[i];
+                var componentType = component.types[0];
+                switch (componentType) {
+                    case 'street_number':
+                        document.getElementById('firstLine').value = component.long_name;
+                        break;
+                    case 'route':
+                        document.getElementById('firstLine').value += ' ' + component.short_name;
+                        break;
+                    case 'locality':
+                        document.getElementById('city').value = component.long_name;
+                        break;
+                    case 'administrative_area_level_1':  
+                        document.getElementById('stateProvince').value = component.short_name;
+                        break;
+                    case 'postal_code':
+                        document.getElementById('zipCode').value = component.long_name;
+                        break;
+                }
+            }
+
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+
+            if (marker) {
+                marker.setPosition(place.geometry.location);
+            } else {
+                // Create a new marker
+                marker = new google.maps.Marker({
+                    position: place.geometry.location,
+                    map: map
+                });
+            }
+        });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('form').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+        });
+
+    window.onload = initMap; 
+</script>
