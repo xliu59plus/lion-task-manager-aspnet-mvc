@@ -10,6 +10,12 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
         <dd class = "col-sm-10">
@@ -60,9 +66,17 @@
 
 <div class="mt-3">
     <!-- "Pick" button that redirects to RequestTask action in Taker controller -->
-    <a asp-action="RequestTask" asp-controller="Taker" asp-route-id="@Model?.Id" class="btn btn-success">Pick</a>
+    <a asp-action="RequestTask" asp-controller="Taker" asp-route-task_id="@Model?.Id" class="btn btn-success">Pick</a>
 
     <!-- "Not Interested" button that redirects to NotInterest action in Taker controller -->
-    <a asp-action="NotInterest" asp-controller="Taker" asp-route-id="@Model?.Id" class="btn btn-secondary">Not Interested</a>
+    <a asp-action="NotInterest" asp-controller="Taker" asp-route-task_id="@Model?.Id" class="btn btn-secondary">Not Interested</a>
 </div>
+
+@if (TempData["RequestResult"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["RequestResult"]
+    </div>
+    TempData.Remove("RequestResult");
+}
 

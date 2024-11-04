@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionTaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241022163905_UpdateTaskModelToBeNullable")]
-    partial class UpdateTaskModelToBeNullable
+    [Migration("20241103181747_dbupdate")]
+    partial class dbupdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,40 @@ namespace LionTaskManagementApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("LionTaskManagementApp.Areas.Identity.Data.ContractorInfo", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ActivatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("CostPerSqrFoot")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LatAndLongitude")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("PreferenceDistance")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTimeOffset>("ProfileSubmitTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("ContractorInfo");
+                });
 
             modelBuilder.Entity("LionTaskManagementApp.Areas.Identity.Data.TaskUser", b =>
                 {
@@ -37,19 +71,12 @@ namespace LionTaskManagementApp.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("DOB")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -77,6 +104,9 @@ namespace LionTaskManagementApp.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("RegisterTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -118,12 +148,21 @@ namespace LionTaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<float>("Height")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Length")
+                        .HasColumnType("real");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OwnerId")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestList")
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
@@ -136,12 +175,6 @@ namespace LionTaskManagementApp.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<float>("height")
-                        .HasColumnType("real");
-
-                    b.Property<float>("length")
-                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

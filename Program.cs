@@ -3,10 +3,13 @@ using LionTaskManagementApp.Data;
 using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// Stripe: besk-hcwu-cqub-khtj-cfvq
+// pk_test_51QEfHKG49cs2m96oj7OFeu4vsXpX5qEdCUZOMpsLrNvE2TuohpnLBkB0uUNlv5MF3GAvaKUkp6Trb1LE6ABRxJEl00F2k9VvhM
 // Add services to the container.
+// Google Maps JavaScript API key: AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -15,7 +18,6 @@ builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireC
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
-
 
 var app = builder.Build();
 
@@ -31,10 +33,12 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseHttpsRedirection();
 
 app.UseRouting();
+
+StripeConfiguration.ApiKey=builder.Configuration.GetSection("Stripe:SK").Get<String>();
 
 app.UseAuthorization();
 
@@ -48,7 +52,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
     foreach (var roleName  
- in new[] { "Admin", "ViceAdmin", "Poster", "Taker" })
+ in new[] { "Admin", "ViceAdmin", "Inactive_Poster", "Poster", "Inactive_Taker", "Taker" })
     {
         if (!await roleManager.RoleExistsAsync(roleName))
         {

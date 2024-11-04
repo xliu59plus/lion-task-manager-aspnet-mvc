@@ -22,6 +22,40 @@ namespace LionTaskManagementApp.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LionTaskManagementApp.Areas.Identity.Data.ContractorInfo", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ActivatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("CostPerSqrFoot")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LatAndLongitude")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("PreferenceDistance")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTimeOffset>("ProfileSubmitTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("ContractorInfos");
+                });
+
             modelBuilder.Entity("LionTaskManagementApp.Areas.Identity.Data.TaskUser", b =>
                 {
                     b.Property<string>("Id")
@@ -34,19 +68,12 @@ namespace LionTaskManagementApp.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("DOB")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -74,6 +101,9 @@ namespace LionTaskManagementApp.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("RegisterTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -109,6 +139,7 @@ namespace LionTaskManagementApp.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeniedList")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
@@ -129,6 +160,10 @@ namespace LionTaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("RequestList")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
@@ -142,7 +177,7 @@ namespace LionTaskManagementApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Task");
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

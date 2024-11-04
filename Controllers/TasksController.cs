@@ -23,14 +23,14 @@ namespace LionTaskManagementApp.Controllers
         // GET: Tasks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Task.ToListAsync());
+            return View(await _context.Tasks.ToListAsync());
         }
 
         [Authorize(Roles="Poster,Admin")]
         public async Task<IActionResult> PosterIndex()
         {
             var currentUserId = User.Identity?.Name;
-            var userTasks = await _context.Task
+            var userTasks = await _context.Tasks
                                   .Where(t => t.OwnerId == currentUserId)
                                   .ToListAsync();
             return View(userTasks);
@@ -44,7 +44,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Task
+            var taskModel = await _context.Tasks
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (taskModel == null)
             {
@@ -62,7 +62,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Task
+            var taskModel = await _context.Tasks
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (taskModel == null)
             {
@@ -131,7 +131,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Task.FindAsync(id);
+            var taskModel = await _context.Tasks.FindAsync(id);
             if (taskModel == null)
             {
                 return NotFound();
@@ -149,7 +149,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Task.FindAsync(id);
+            var taskModel = await _context.Tasks.FindAsync(id);
             if (taskModel == null)
             {
                 return NotFound();
@@ -223,7 +223,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var persistedTaskModel = await _context.Task.FindAsync(id);
+            var persistedTaskModel = await _context.Tasks.FindAsync(id);
             if(persistedTaskModel == null) {
                 return NotFound();
             }
@@ -241,7 +241,7 @@ namespace LionTaskManagementApp.Controllers
                     _context.Update(persistedTaskModel);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException e)
+                catch (DbUpdateConcurrencyException)
                 {
                     if (!TaskModelExists(persistedTaskModel.Id))
                     {
@@ -267,7 +267,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Task
+            var taskModel = await _context.Tasks
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (taskModel == null)
             {
@@ -286,7 +286,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Task
+            var taskModel = await _context.Tasks
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (taskModel == null)
             {
@@ -302,10 +302,10 @@ namespace LionTaskManagementApp.Controllers
         [Authorize(Roles="Poster,Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var taskModel = await _context.Task.FindAsync(id);
+            var taskModel = await _context.Tasks.FindAsync(id);
             if (taskModel != null)
             {
-                _context.Task.Remove(taskModel);
+                _context.Tasks.Remove(taskModel);
             }
 
             await _context.SaveChangesAsync();
@@ -318,10 +318,10 @@ namespace LionTaskManagementApp.Controllers
         [Authorize(Roles="Poster,Admin")]
         public async Task<IActionResult> PosterDeleteConfirmed(int id)
         {
-            var taskModel = await _context.Task.FindAsync(id);
+            var taskModel = await _context.Tasks.FindAsync(id);
             if (taskModel != null)
             {
-                _context.Task.Remove(taskModel);
+                _context.Tasks.Remove(taskModel);
             }
 
             await _context.SaveChangesAsync();
@@ -330,7 +330,7 @@ namespace LionTaskManagementApp.Controllers
 
         private bool TaskModelExists(int id)
         {
-            return _context.Task.Any(e => e.Id == id);
+            return _context.Tasks.Any(e => e.Id == id);
         }
     }
 }

@@ -1,0 +1,25 @@
+@model IEnumerable<ProductEntity>
+
+<br />
+<table class="table table-responsive table-light table-boardered" style="width:100%">
+    <tr>
+        <th>Product name</th>
+        <th>Rate</th>
+        <th>Quantity</th>
+        <th>Total</th>
+    </tr>
+
+    @foreach(var item in Model) {
+        <tr>
+            <td>@item.Product</td>
+            <td>@item.Rate</td>
+            <td>@item.Quantity</td>
+            <td>@(item.Rate*item.Quantity)</td>
+        </tr>
+    }
+
+    <br />
+    <p>
+        <a asp-action="create" asp-asp-controller="CheckOut">CheckOut</a>
+    </p>
+</table>
