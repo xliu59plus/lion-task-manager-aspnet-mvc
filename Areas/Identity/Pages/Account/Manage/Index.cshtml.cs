@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -62,19 +59,9 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Full name")]
             public string Name { get; set; }
 
-            [Required]
-            [Display(Name = "Birth Date")]
-            [DataType(DataType.Date)]
-            public DateTimeOffset DOB { get; set; }
-
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-
-            [Required]
-            [Display(Name = "Location")]
-            [DataType(DataType.Text)]
-            public string Location { get; set; }
 
             [Required]
             [Display(Name = "Role")]
@@ -92,9 +79,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account.Manage
             Input = new InputModel
             {
                 Name = user.Name,
-                DOB = user.DOB,
                 PhoneNumber = user.PhoneNumber,
-                Location = user.Location,
                 // Role is not assigned yet.
             };
         }
@@ -141,17 +126,8 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account.Manage
                 user.Name = Input.Name;
             }
 
-            if (Input.DOB != user.DOB)
-            {
-                user.DOB = Input.DOB;
-            }
-
             if (Input.PhoneNumber != user.PhoneNumber) {
                 user.PhoneNumber = Input.PhoneNumber;
-            }
-
-            if(Input.Location != user.Location) {
-                user.Location = Input.Location;
             }
 
             await _userManager.UpdateAsync(user);

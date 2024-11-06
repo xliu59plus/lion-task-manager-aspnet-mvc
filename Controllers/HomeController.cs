@@ -15,6 +15,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        Console.WriteLine("HelloWorld");
         return View();
     }
 
@@ -45,6 +46,28 @@ public class HomeController : Controller
             // Redirect to the TakerIndex in TasksController
             return RedirectToAction("TakerIndex", "Taker");
         }
+
+        // If the user doesn't have either role, redirect to the homepage or access denied
+        return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult CompleteProfile()
+    {
+        // Check if the user has the role "Poster"
+        if (User.IsInRole("Poster") || User.IsInRole("Taker"))
+        {
+            TempData["SuccessMessage"] = "You are an active user now"; 
+            TempData.Keep("SuccessMessage");
+            return RedirectToAction("Index", "Home");
+        } 
+        else if(User.IsInRole("Inactive_Poster")) {
+            return RedirectToAction("EditProfile", "Poster");
+        } 
+        else if(User.IsInRole("Inactive_Taker")) {
+            return RedirectToAction("EditProfile", "Taker");
+        }
+
+        Console.WriteLine("HomeController: CompleteProfile: User doesn't have a proper role");
 
         // If the user doesn't have either role, redirect to the homepage or access denied
         return RedirectToAction("Index", "Home");

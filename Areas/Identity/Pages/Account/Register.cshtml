@@ -23,18 +23,8 @@
                 <span asp-validation-for="Input.Name" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input asp-for="Input.DOB" class="form-control" />
-                <label asp-for="Input.DOB"></label>
-                <span asp-validation-for="Input.DOB" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
                 <input asp-for="Input.PhoneNumber" class="form-control" />
                 <label asp-for="Input.PhoneNumber"></label>
-                @* <span asp-validation-for="Input.DOB" class="text-danger"></span> *@
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.Location" class="form-control" />
-                <label asp-for="Input.Location"></label>
                 @* <span asp-validation-for="Input.DOB" class="text-danger"></span> *@
             </div>
             <div class="form-group">
@@ -43,14 +33,14 @@
 
                 <!-- Task Poster Radio Button -->
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" asp-for="Input.Role" value="Poster" id="Poster" />
-                    <label class="form-check-label" for="Poster">Poster (Become a user that will post tasks)</label>
+                    <input type="radio" class="form-check-input" asp-for="Input.Role" value="Inactive_Poster" id="Poster" />
+                    <label class="form-check-label" for="Poster">Task Owner (Become a user that will post tasks)</label>
                 </div>
 
                 <!-- Task Taker Radio Button -->
                 <div class="form-check">
-                    <input type="radio" class="form-check-input" asp-for="Input.Role" value="Taker" id="Taker" />
-                    <label class="form-check-label" for="Taker">Task (Become a user that will resolve tasks)</label>
+                    <input type="radio" class="form-check-input" asp-for="Input.Role" value="Inactive_Taker" id="Taker" />
+                    <label class="form-check-label" for="Taker">Contractor (Become a user that will resolve tasks)</label>
                 </div>
             </div>
 
