@@ -18,10 +18,10 @@ builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireC
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpsRedirection(options =>
-{
-    options.HttpsPort = 7227;
-});
+// builder.Services.AddHttpsRedirection(options =>
+// {
+//     options.HttpsPort = 7227;
+// });
 
 var app = builder.Build();
 
@@ -37,7 +37,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
