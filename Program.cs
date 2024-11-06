@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using LionTaskManagementApp.Data;
 using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +17,11 @@ builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireC
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 7227;
+});
 
 var app = builder.Build();
 
