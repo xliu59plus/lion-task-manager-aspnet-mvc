@@ -52,7 +52,15 @@
                 @Html.DisplayFor(modelItem => item.Height)
             </td>
             <td>
+                <td @if (item.Status.Equals(MyTaskStatus.PendingComplete.ToString()))
+                    {
+                        <text>class="text-danger"</text>
+                    }>
                 @Html.DisplayFor(modelItem => item.Status)
+                @if (!string.IsNullOrEmpty(item.RequestList))
+                {
+                    <span class="badge badge-success">Contractor Check In</span>
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Location)

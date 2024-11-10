@@ -1,4 +1,7 @@
+@using LionTaskManagementApp.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
 @model LionTaskManagementApp.Models.TaskModel
+@inject UserManager<TaskUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -65,11 +68,21 @@
 </div>
 
 <div class="mt-3">
-    <!-- "Pick" button that redirects to RequestTask action in Taker controller -->
-    <a asp-action="RequestTask" asp-controller="Taker" asp-route-task_id="@Model?.Id" class="btn btn-success">Pick</a>
-
-    <!-- "Not Interested" button that redirects to NotInterest action in Taker controller -->
-    <a asp-action="NotInterest" asp-controller="Taker" asp-route-task_id="@Model?.Id" class="btn btn-secondary">Not Interested</a>
+    @if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && string.IsNullOrEmpty(Model.TakenById))
+    {
+        <a asp-action="RequestTask" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="true" class="btn btn-success">Pick</a>
+        <a asp-action="RequestTask" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="false" class="btn btn-secondary">Not Interested</a>
+    }
+    else if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && Model.TakenById.Equals(UserManager.GetUserId(User)))
+    {
+        <a asp-action="ProcessToInProgress" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="true" class="btn btn-primary">Start the Work</a>
+        <a asp-action="ProcessToInProgress" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="false" class="btn btn-danger">Decline</a>
+    }
+    else if (Model.Status.Equals(MyTaskStatus.InProgress.ToString()) && Model.TakenById.Equals(UserManager.GetUserId(User)))
+    {
+        <a asp-action="RequestProjectComplete" asp-controller="Taker" asp-route-taskId="@Model?.Id" class="btn btn-success">Complete Project</a>
+    }
+    @* No button needed for Model.Status == TaskStatus.Complete *@
 </div>
 
 @if (TempData["RequestResult"] != null)

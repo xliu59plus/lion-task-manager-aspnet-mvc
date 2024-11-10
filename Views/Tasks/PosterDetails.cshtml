@@ -1,4 +1,7 @@
+@using LionTaskManagementApp.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
 @model LionTaskManagementApp.Models.TaskModel
+@inject UserManager<TaskUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
@@ -62,6 +65,57 @@
     </dl>
 </div>
 <div>
-    <a asp-action="PosterEdit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="PosterIndex">Back to List</a>
+
+    @if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && string.IsNullOrEmpty(Model.RequestList) && !string.IsNullOrEmpty(Model.TakenById))
+    {
+        <a asp-action="PosterEdit" asp-route-id="@Model?.Id">Edit</a>
+    }
+    else if (!string.IsNullOrEmpty(Model.RequestList) && string.IsNullOrEmpty(Model.TakenById) && Model.Status.Equals(MyTaskStatus.Initialized.ToString()))
+    {
+        string[] userIds = Model.RequestList.Split(';');
+        // 1. Inject the UserManager
+        // var UserManager = ViewContext.HttpContext.RequestServices.GetService(typeof(UserManager<TaskUser>)) as UserManager<TaskUser>;
+
+        <div class="mt-3">
+            <h4>Requesters</h4>
+            <ul class="list-group">
+                @foreach (var userId in userIds)
+                {
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        continue;    
+                    }
+
+                    var user = await UserManager.FindByIdAsync(userId);
+                    string username = user?.UserName;
+
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        @username
+                        <a asp-action="ApproveRequest" asp-controller="Poster" asp-route-taskId="@Model?.Id" asp-route-userId="@userId" class="btn btn-primary">Approve</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    else if(Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && !string.IsNullOrEmpty(Model.TakenById))
+    {
+        var UserManager = ViewContext.HttpContext.RequestServices.GetService(typeof(UserManager<TaskUser>)) as UserManager<TaskUser>;
+        var user = await UserManager.FindByIdAsync(Model.TakenById);
+        <div id="notification-bar" class="alert alert-success">
+            This task has been assigned to user: <span> @user.Name</span>, waiting to start.
+        </div>
+    }
+    else if(Model.Status.Equals(MyTaskStatus.InProgress.ToString()))
+    {
+        var UserManager = ViewContext.HttpContext.RequestServices.GetService(typeof(UserManager<TaskUser>)) as UserManager<TaskUser>;
+        var username = await UserManager.FindByIdAsync(Model.TakenById);
+        <div id="notification-bar" class="alert alert-success">
+            This task is inprogress with user: <span> @username</span>
+        </div>
+    }
+    else if (Model.Status.Equals(MyTaskStatus.PendingComplete.ToString()))
+    {
+        <a asp-action="ApproveComplete" asp-controller="Poster" asp-route-taskId="@Model?.Id" asp-route-doApprove="true" class="btn btn-primary">Approve</a>
+        <a asp-action="ApproveComplete" asp-controller="Poster" asp-route-taskId="@Model?.Id" asp-route-doApprove="false" class="btn btn-danger">Decline</a>
+    }
 </div>

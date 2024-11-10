@@ -4,6 +4,7 @@ using LionTaskManagementApp.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using LionTaskManagementApp.Areas.Identity.Data;
+using LionTaskManagementApp.Models;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -121,6 +122,48 @@ namespace LionTaskManagementApp.Controllers
             }
             return View(taskModel);
         }
+
+        [Authorize(Roles = "Poster,Admin")]
+        // GET: Poster/ApproveRequest
+        public async Task<IActionResult> ApproveRequest(int taskId, string userId)
+        {
+            Console.WriteLine("ApproveRequest hit");
+
+            if (userId == null)
+            {
+                return NotFound();
+            }
+
+            var taskModel = await _context.Tasks.FindAsync(taskId);
+            if (taskModel == null)
+            {
+                return NotFound();
+            }
+
+            taskModel.TakenById = userId;
+
+            _context.SaveChanges();
+            return RedirectToAction("PosterDetails", "Tasks", new { id = taskId });
+        }
+
+
+        [Authorize(Roles = "Poster,Admin")]
+        // GET: Poster/ApproveTask
+        public async Task<IActionResult> ApproveComplete(int taskId, bool doApprove)
+        {
+            var taskModel = await _context.Tasks.FindAsync(taskId);
+            if (taskModel == null)
+            {
+                return NotFound();
+            }
+
+            taskModel.Status = doApprove? MyTaskStatus.Completed.ToString(): MyTaskStatus.InProgress.ToString();
+
+            _context.SaveChanges();
+            return RedirectToAction("PosterDetails", "Tasks", new { id = taskId });
+        }
+
+
 
         // [HttpPost]
         // [ValidateAntiForgeryToken]

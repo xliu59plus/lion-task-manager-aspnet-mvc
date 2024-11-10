@@ -5,6 +5,7 @@ using LionTaskManagementApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
+using NuGet.Packaging.Signing;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -67,59 +68,8 @@ namespace LionTaskManagementApp.Controllers
             return RedirectToAction("Index", "Home"); 
         }
 
-        [Authorize(Roles="Taker, Admin")]  
-        public IActionResult RequestTask(int task_id)
-        {
-            // 1. Get the current user's ID
-            string currentUserId = _userManager.GetUserId(User); 
-
-            // 2. Check if the task exists
-            var task = _context.Tasks.Find(task_id); // Assuming 'Tasks' is your DbSet
-            if (task == null)
-            {
-                return NotFound(); // Or handle the error appropriately
-            }
-
-            // 3. Add the user to the request list (assuming you have a relationship set up)
-            var requestList = task.RequestList.Split(";");
-            if(!requestList.Contains(currentUserId)) {
-                task.RequestList = task.RequestList + currentUserId + ";";
-            }
-            
-            _context.SaveChanges();
-
-            TempData["RequestResult"] = "The request is sent successfully, please wait for approval"; 
-            TempData.Keep("RequestResult");
-
-            // 4. Redirect or return a view as needed
-            return RedirectToAction("TakerDetails", new {id = task_id}); // Or wherever you want to redirect
-        }
-
-        public IActionResult NotInterest(int task_id)
-        {
-            // 1. Get the current user's ID
-            string currentUserId = _userManager.GetUserId(User); 
-
-            // 2. Check if the task exists
-            var task = _context.Tasks.Find(task_id);
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            var deniedList = task.DeniedList.Split(";");
-            if(!deniedList.Contains(currentUserId)) {
-                task.DeniedList = task.DeniedList + currentUserId + ";";
-            }
-
-            _context.SaveChanges();
-
-            // 4. Redirect or return a view as needed
-            return RedirectToAction("TakerDetails", new {id = task_id});;
-        }
-
         // GET: Tasks
-        [Authorize(Roles="Taker,Admin")]
+        [Authorize(Roles = "Taker,Admin")]
         public async Task<IActionResult> TakerIndex()
         {
             // var currentUserId = User.Identity?.Name;
@@ -131,7 +81,7 @@ namespace LionTaskManagementApp.Controllers
         }
 
         // GET: Tasks/Details/5
-        [Authorize(Roles="Taker,Admin")]
+        [Authorize(Roles = "Taker,Admin")]
         public async Task<IActionResult> TakerDetails(int? id)
         {
             if (id == null)
@@ -149,8 +99,7 @@ namespace LionTaskManagementApp.Controllers
             return View(taskModel);
         }
 
-
-        [Authorize(Roles="Taker,Admin")]
+        [Authorize(Roles = "Taker,Admin")]
         // GET: Tasks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -167,6 +116,124 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
             return View(taskModel);
+        }
+
+        [Authorize(Roles="Taker, Admin")]  
+        public IActionResult RequestTask(int taskId, bool doAccept)
+        {
+            // 1. Get the current user's ID
+            string currentUserId = _userManager.GetUserId(User); 
+
+            // 2. Check if the task exists
+            var task = _context.Tasks.Find(taskId); // Assuming 'Tasks' is your DbSet
+            if (task == null)
+            {
+                return NotFound(); // Or handle the error appropriately
+            }
+
+            var requestList = task.RequestList.Split(";").ToList();
+            if (doAccept)
+            {
+                
+                if (!requestList.Contains(currentUserId))
+                {
+                    requestList.Add(currentUserId);
+                    task.RequestList = string.Join(";", requestList);
+                }
+            }
+            else 
+            {
+                if (requestList.Remove(currentUserId)) 
+                { 
+                    task.RequestList = string.Join(";", requestList);
+                }
+
+                var deniedList = task.DeniedList.Split(";").ToList();
+                if (!deniedList.Contains(currentUserId))
+                {
+                    deniedList.Add(currentUserId);
+                    task.DeniedList = string.Join(";", deniedList);
+                }
+            }
+
+            _context.SaveChanges();
+            var RequestResultAlert = doAccept
+                ? "The request is sent successfully, please wait for approval!"
+                : "The task has been declined!";
+            
+            TempData["RequestResult"] = RequestResultAlert; 
+            TempData.Keep("RequestResult");
+
+            return RedirectToAction("TakerDetails", new {id = taskId });
+        }
+
+        [Authorize(Roles = "Taker, Admin")]
+        public IActionResult ProcessToInProgress(int taskId, bool doAccept)
+        {
+            // 1. Get the current user's ID
+            string currentUserId = _userManager.GetUserId(User);
+
+            // 2. Check if the task exists
+            var task = _context.Tasks.Find(taskId); // Assuming 'Tasks' is your DbSet
+            if (task == null)
+            {
+                return NotFound(); // Or handle the error appropriately
+            }
+
+            
+            if (doAccept)
+            {
+                task.Status = MyTaskStatus.InProgress.ToString();
+            }
+            else
+            {
+                var requestList = task.RequestList.Split(";").ToList();
+                if (requestList.Remove(currentUserId))
+                {
+                    task.RequestList = string.Join(";", requestList);
+                }
+
+                var deniedList = task.DeniedList.Split(";").ToList();
+                if (!deniedList.Contains(currentUserId))
+                {
+                    deniedList.Add(currentUserId);
+                    task.DeniedList = string.Join(";", deniedList);
+                }
+
+                task.TakenById = string.Empty;
+            }
+
+            _context.SaveChanges();
+            var RequestResultAlert = doAccept
+                ? "Successfully started the task!"
+                : "The task has been declined!";
+
+            TempData["RequestResult"] = RequestResultAlert;
+            TempData.Keep("RequestResult");
+
+            return RedirectToAction("TakerDetails", new { id = taskId });
+        }
+
+        [Authorize(Roles = "Taker, Admin")]
+        public IActionResult RequestProjectComplete(int taskId)
+        {
+            // 1. Get the current user's ID
+            string currentUserId = _userManager.GetUserId(User);
+
+            // 2. Check if the task exists
+            var task = _context.Tasks.Find(taskId); // Assuming 'Tasks' is your DbSet
+            if (task == null)
+            {
+                return NotFound(); // Or handle the error appropriately
+            }
+
+            task.Status = MyTaskStatus.PendingComplete.ToString();
+            _context.SaveChanges();
+            var RequestResultAlert = "Successfully requested task completion!";
+            TempData["RequestResult"] = RequestResultAlert;
+            TempData.Keep("RequestResult");
+
+            return RedirectToAction("TakerDetails", new { id = taskId });
         }
 
         // [HttpPost]

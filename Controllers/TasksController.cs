@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LionTaskManagementApp.Data;
 using LionTaskManagementApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using TaskStatus = LionTaskManagementApp.Models.MyTaskStatus;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -109,6 +110,7 @@ namespace LionTaskManagementApp.Controllers
                 taskModel.DeniedList = null;  // Initialize DeniedList if it's required to be non-null
                 taskModel.TakenById = null;  // Set TakenById to null or another default value
                 taskModel.CreatedTime = DateTimeOffset.UtcNow;  // Set the current timestamp for CreatedTime
+                taskModel.Status = MyTaskStatus.Initialized.ToString();
 
                 // Add the task to the context and save changes
                 _context.Add(taskModel);
