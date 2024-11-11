@@ -106,9 +106,8 @@ namespace LionTaskManagementApp.Controllers
 
             if (ModelState.IsValid)
             {
-                taskModel.Status = "Initialized";  // Set default status
-                taskModel.DeniedList = null;  // Initialize DeniedList if it's required to be non-null
-                taskModel.TakenById = null;  // Set TakenById to null or another default value
+                // taskModel.DeniedList = string.Empty;  // Initialize DeniedList if it's required to be non-null
+                // taskModel.TakenById = null;  // Set TakenById to null or another default value
                 taskModel.CreatedTime = DateTimeOffset.UtcNow;  // Set the current timestamp for CreatedTime
                 taskModel.Status = MyTaskStatus.Initialized.ToString();
 

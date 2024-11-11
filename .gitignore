@@ -6,3 +6,5 @@ obj/
 /.vs/lion-task-manager/DesignTimeBuild
 /.vs/lion-task-manager-aspnet-mvc/v17
 /.vs/lion-task-manager/config
+/.vs
+/.config/dotnet-tools.json

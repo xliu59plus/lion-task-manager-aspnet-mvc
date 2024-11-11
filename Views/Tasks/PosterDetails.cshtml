@@ -7,19 +7,12 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Html.DisplayFor(model => model.Title)</h1>
 
 <div>
-    <h4>TaskModel</h4>
+    <h4>Details</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Length) (inch)
         </dt>
@@ -57,7 +50,11 @@
             @Html.DisplayFor(model => model.TakenById)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedTime)
+            @if (!string.IsNullOrEmpty(Model.TakenById))
+            {
+                var user = await UserManager.FindByIdAsync(Model.TakenById);
+                @user.Name
+            }
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.CreatedTime)
@@ -65,7 +62,9 @@
     </dl>
 </div>
 <div>
-
+    <a asp-action="PosterIndex">Back to List</a>
+</div>
+<div>
     @if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && string.IsNullOrEmpty(Model.RequestList) && !string.IsNullOrEmpty(Model.TakenById))
     {
         <a asp-action="PosterEdit" asp-route-id="@Model?.Id">Edit</a>
@@ -99,7 +98,6 @@
     }
     else if(Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && !string.IsNullOrEmpty(Model.TakenById))
     {
-        var UserManager = ViewContext.HttpContext.RequestServices.GetService(typeof(UserManager<TaskUser>)) as UserManager<TaskUser>;
         var user = await UserManager.FindByIdAsync(Model.TakenById);
         <div id="notification-bar" class="alert alert-success">
             This task has been assigned to user: <span> @user.Name</span>, waiting to start.
@@ -107,15 +105,24 @@
     }
     else if(Model.Status.Equals(MyTaskStatus.InProgress.ToString()))
     {
-        var UserManager = ViewContext.HttpContext.RequestServices.GetService(typeof(UserManager<TaskUser>)) as UserManager<TaskUser>;
-        var username = await UserManager.FindByIdAsync(Model.TakenById);
+        var user = await UserManager.FindByIdAsync(Model.TakenById);
         <div id="notification-bar" class="alert alert-success">
-            This task is inprogress with user: <span> @username</span>
+            This task is inprogress with user: <span> @user.Name</span>
         </div>
     }
     else if (Model.Status.Equals(MyTaskStatus.PendingComplete.ToString()))
     {
+        var user = await UserManager.FindByIdAsync(Model.TakenById);
+        <div id="notification-bar" class="alert alert-success">
+            User: <span> @user.Name</span> request to complete the task.
+        </div>
         <a asp-action="ApproveComplete" asp-controller="Poster" asp-route-taskId="@Model?.Id" asp-route-doApprove="true" class="btn btn-primary">Approve</a>
         <a asp-action="ApproveComplete" asp-controller="Poster" asp-route-taskId="@Model?.Id" asp-route-doApprove="false" class="btn btn-danger">Decline</a>
+    } else if(Model.Status.Equals(MyTaskStatus.Completed.ToString()))
+    {
+        var user = await UserManager.FindByIdAsync(Model.TakenById);
+        <div id="notification-bar" class="alert alert-success">
+            <span> @user.Name</span> completed the task!
+        </div>
     }
 </div>

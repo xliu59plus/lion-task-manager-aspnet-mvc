@@ -81,8 +81,13 @@
     else if (Model.Status.Equals(MyTaskStatus.InProgress.ToString()) && Model.TakenById.Equals(UserManager.GetUserId(User)))
     {
         <a asp-action="RequestProjectComplete" asp-controller="Taker" asp-route-taskId="@Model?.Id" class="btn btn-success">Complete Project</a>
+    } else if(Model.Status.Equals(MyTaskStatus.Completed.ToString()))
+    {
+        var user = await UserManager.FindByIdAsync(Model.TakenById);
+        <div id="notification-bar" class="alert alert-success">
+            <span> @user.Name</span> completed the task!
+        </div>
     }
-    @* No button needed for Model.Status == TaskStatus.Complete *@
 </div>
 
 @if (TempData["RequestResult"] != null)

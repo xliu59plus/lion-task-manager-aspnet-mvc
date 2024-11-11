@@ -1,4 +1,7 @@
 @model IEnumerable<LionTaskManagementApp.Models.TaskModel>
+@using LionTaskManagementApp.Areas.Identity.Data
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<TaskUser> UserManager
 
 @{
     ViewData["Title"] = "PosterHome";
@@ -52,21 +55,17 @@
                 @Html.DisplayFor(modelItem => item.Height)
             </td>
             <td>
-                <td @if (item.Status.Equals(MyTaskStatus.PendingComplete.ToString()))
-                    {
-                        <text>class="text-danger"</text>
-                    }>
                 @Html.DisplayFor(modelItem => item.Status)
-                @if (!string.IsNullOrEmpty(item.RequestList))
-                {
-                    <span class="badge badge-success">Contractor Check In</span>
-                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Location)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TakenById)
+                @if (!string.IsNullOrEmpty(item.TakenById))
+                {
+                    var user = await UserManager.FindByIdAsync(item.TakenById);
+                    @user.UserName
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedTime)
