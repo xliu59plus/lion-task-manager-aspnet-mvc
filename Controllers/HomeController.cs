@@ -36,7 +36,7 @@ public class HomeController : Controller
         if (User.IsInRole("Poster"))
         {
             // Redirect to the PosterIndex in TasksController
-            return RedirectToAction("PosterIndex", "Tasks");
+            return RedirectToAction("Index", "Poster");
         }
 
         // Check if the user has the role "Taker"

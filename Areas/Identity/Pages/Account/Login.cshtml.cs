@@ -121,7 +121,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByEmailAsync(Input.Email);
                     var roles = await _userManager.GetRolesAsync(user); 
                     if(roles.IndexOf("Poster") != -1) {
-                        returnUrl = Url.Action("PosterIndex", "Tasks");
+                        returnUrl = Url.Action("Index", "Poster");
                         Console.WriteLine("Login as Poster");
                     } else if(roles.IndexOf("Taker") != -1) {
                         returnUrl = Url.Action("TakerIndex", "Taker");

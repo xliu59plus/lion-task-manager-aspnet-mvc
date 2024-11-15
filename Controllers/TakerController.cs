@@ -72,10 +72,10 @@ namespace LionTaskManagementApp.Controllers
         [Authorize(Roles = "Taker,Admin")]
         public async Task<IActionResult> TakerIndex()
         {
-            // var currentUserId = User.Identity?.Name;
-            // var userTasks = await _context.Task
-            //                       .Where(t => t.OwnerId == currentUserId)
-            //                       .ToListAsync();
+            var currentUserId = User.Identity?.Name;
+            var userTasks = await _context.Tasks
+                                  .Where(t => t.OwnerId == currentUserId || t.Status.Equals(MyTaskStatus.Initialized))
+                                  .ToListAsync();
             // return View(userTasks);
             return View(await _context.Tasks.ToListAsync());
         }

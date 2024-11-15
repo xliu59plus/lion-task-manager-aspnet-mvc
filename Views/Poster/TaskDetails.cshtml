@@ -62,12 +62,12 @@
     </dl>
 </div>
 <div>
-    <a asp-action="PosterIndex">Back to List</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 <div>
     @if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && string.IsNullOrEmpty(Model.RequestList) && !string.IsNullOrEmpty(Model.TakenById))
     {
-        <a asp-action="PosterEdit" asp-route-id="@Model?.Id">Edit</a>
+        <a asp-action="TaskEdit" asp-route-id="@Model?.Id">Edit</a>
     }
     else if (!string.IsNullOrEmpty(Model.RequestList) && string.IsNullOrEmpty(Model.TakenById) && Model.Status.Equals(MyTaskStatus.Initialized.ToString()))
     {
