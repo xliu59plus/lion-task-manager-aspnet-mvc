@@ -1,68 +1,168 @@
 @using LionTaskManagementApp.Models
 @model ContractorInfoViewModel // Create a view model
-<h2>Edit Profile (Taker)</h2>
 
-<form asp-action="EditProfileTaker" method="post">
-    <div class="form-group">
-        <label asp-for="PricePerSquareFoot">Price Per Square Foot:</label>
-        <input asp-for="PricePerSquareFoot" class="form-control" />
-    </div>
-    
-    <div class="form-group">
-        <label asp-for="PreferenceDistance">Preference Distance:</label>
-        <input asp-for="PreferenceDistance" class="form-control" />
-    </div>
+<h2>Please Complete your profile</h2>
 
-    <div class="form-group">
-        <label asp-for="FullAddress">Address:</label> 
-        <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address"/> 
+<form asp-action="EditProfileTaker" method="post" enctype="multipart/form-data">
+    <!-- Business Information -->
+    <h4>Business and Social Media Links</h4>
+    <hr>
+      <div class="form-group">
+        <label asp-for="EIN">Company name:</label>
+        <input asp-for="EIN" class="form-control" placeholder="Enter your Company Name" />
     </div>
-
+    <div class="form-group">
+        <label asp-for="EIN">EIN:</label>
+        <input asp-for="EIN" class="form-control" placeholder="Enter your EIN" />
+    </div>
+    <div class="form-group">
+        <label>Business Organization Documentation (Upload):</label>
+        <input type="file" class="form-control-file" id="BusinessDocumentationUpload" />
+    </div>
+    <div class="form-group">
+        <label asp-for="FacebookLink">Facebook:</label>
+        <input asp-for="FacebookLink" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="TikTokLink">TikTok:</label>
+        <input asp-for="TikTokLink" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="InstagramLink">Instagram:</label>
+        <input asp-for="InstagramLink" class="form-control" />
+    </div>
+     <!-- Address -->
+    <h4>Address Information</h4>
+    <hr>
     <div class="form-group">
         <label asp-for="FirstLine">Address Line 1:</label>
-        <input asp-for="FirstLine" class="form-control" id="firstLine" readonly/>
+        <input asp-for="FirstLine" class="form-control" id="firstLine" readonly />
     </div>
-
     <div class="form-group">
         <label asp-for="SecondLine">Address Line 2:</label>
         <input asp-for="SecondLine" class="form-control" id="secondLine" />
     </div>
     <div class="form-group">
-        <label asp-for="StateProvince">State/Province:</label>
-        <input asp-for="StateProvince" class="form-control" id="stateProvince" readonly/>
+        <label asp-for="City">City:</label>
+        <input asp-for="City" class="form-control" id="city" readonly />
     </div>
     <div class="form-group">
-        <label asp-for="City">City:</label>
-        <input asp-for="City" class="form-control" id="city" readonly/>
+        <label asp-for="StateProvince">State/Province:</label>
+        <input asp-for="StateProvince" class="form-control" id="stateProvince" readonly />
     </div>
     <div class="form-group">
         <label asp-for="ZipCode">Zip Code:</label>
-        <input asp-for="ZipCode" class="form-control" id="zipCode" readonly/>
+        <input asp-for="ZipCode" class="form-control" id="zipCode" readonly />
+    </div>
+    
+    <h4>Work Preferences</h4>
+    <!-- Wallpen E2 Machine Information -->
+    <h5>Wallpen E2 Machine Information</h5>
+    <div class="form-group">
+        <label for="WallpenModel">Wallpen Machine Model:</label>
+        <input type="text" id="WallpenMachineModel" name="WallpenMachineModel" class="form-control" placeholder="Enter Wallpen Machine Model (e.g., E2)" required />
+    </div>
+    <div class="form-group">
+        <label for="WallpenSerialNumber">Wallpen E2 Machine Series Number:</label>
+        <input type="text" id="WallpenSerialNumber" name="WallpenSerialNumber" class="form-control" placeholder="Enter Serial Number" required />
+    </div>
+    <div class="form-group">
+        <label>Does your machine print white color?</label>
+        <div>
+            <input type="radio" id="PrintsWhiteYes" name="PrintsWhite" value="true" /> Yes
+            <input type="radio" id="PrintsWhiteNo" name="PrintsWhite" value="false" /> No
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Supports CMYK Colors?</label>
+        <div>
+            <input type="radio" id="SupportsCMYKYes" name="SupportsCMYK" value="true" /> Yes
+            <input type="radio" id="SupportsCMYKNo" name="SupportsCMYK" value="false" /> No
+        </div>
     </div>
 
-    <input type="hidden" asp-for="LatAndLongitude" id="LatAndLongitude" readonly/>
+     <!-- Artwork Specialization -->
+    <h4>Artwork Specialization</h4>
+    <hr>
+    <div class="form-group">
+        <label asp-for="ArtworkSpecialization">Artwork Specialization:</label>
+        <select asp-for="ArtworkSpecialization" class="form-control" id="artworkSpecialization">
+            <option value="">Select Specialization</option>
+            <option value="Abstract">Abstract</option>
+            <option value="Portrait">Portrait</option>
+            <option value="Landscape">Landscape</option>
+            <option value="Modern">Modern</option>
+            <option value="Other">Other</option>
+        </select>
+        <input asp-for="ArtworkSpecialization" class="form-control mt-2" id="artworkOther" placeholder="Please specify..." style="display: none;" />
+    </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button> 
+    <!-- Pricing -->
+    <h5>Pricing Information</h5>
+    <div class="form-group">
+        <label for="CMYKPrice">CMYK Colors Price (per square footage):</label>
+        <input type="number" id="CMYKPrice" name="CMYKPrice" class="form-control" placeholder="Enter price for CMYK colors" />
+    </div>
+    <div class="form-group">
+        <label for="WhitePrice">White Color Price (per square footage):</label>
+        <input type="number" id="WhitePrice" name="WhitePrice" class="form-control" placeholder="Enter price for white color" />
+    </div>
+    <div class="form-group">
+        <label for="CMYKWhitePrice">CMYK + White Colors Price (per square footage):</label>
+        <input type="number" id="CMYKWhitePrice" name="CMYKWhitePrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
+    </div>
+
+    <!-- Travel Preferences -->
+    <h4>Travel Preferences</h4>
+    <hr>
+    <div class="form-group">
+        <label>Are you willing to travel over 100 miles from your Zip Code?</label>
+        <div>
+            <input type="radio" id="travelOver100Yes" name="travelOver100" value="Yes" /> Yes
+            <input type="radio" id="travelOver100No" name="travelOver100" value="No" /> No
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Do you charge travel fees over 100 miles from your location?</label>
+        <div>
+            <input type="radio" id="chargeTravelFeesYes" name="chargeTravelFees" value="Yes" /> Yes
+            <input type="radio" id="chargeTravelFeesNo" name="chargeTravelFees" value="No" /> No
+        </div>
+    </div>
+    <div class="form-group" id="travelFeeDetails" style="display: none;">
+        <label>What is your fee traveling over 100 miles?</label>
+        <div class="form-group">
+            <input type="number" id="travelFeeAmount" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
+            <select id="feeType" class="form-control mt-2">
+                <option value="PerSquareFoot">Per Square Footage</option>
+                <option value="OneTime">One Time Fee</option>
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
 </form>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
-
+<!-- Map -->
 <div id="map" style="height: 400px; width: 100%;"></div>
 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
 
 <script>
     let map;
     let marker;
+
     function initMap() {
-        // Initialize the map (you might want to center it based on user's location or a default)
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: -34.397, lng: 150.644 }, // Default location
-            zoom: 8
+            center: { lat: 37.0902, lng: -95.7129 }, // Center on the USA
+            zoom: 4 // National-level zoom
         });
 
-        // Autocomplete for the address input
         var input = document.getElementById('addressInput');
-        var autocomplete = new google.maps.places.Autocomplete(input);
+        var autocomplete = new google.maps.places.Autocomplete(input, {
+            componentRestrictions: { country: "us" } // Restrict to the USA
+        });
 
         autocomplete.addListener('place_changed', function() {
             var place = autocomplete.getPlace();
@@ -71,15 +171,10 @@
                 return;
             }
 
-            // Get latitude and longitude
             var lat = place.geometry.location.lat();
             var lng = place.geometry.location.lng();
-            document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
-
-            // Populate address components
             var addressComponents = place.address_components;
-            for (var i = 0; i < addressComponents.length; i++) {
-                var component = addressComponents[i];
+            addressComponents.forEach(function(component) {
                 var componentType = component.types[0];
                 switch (componentType) {
                     case 'street_number':
@@ -91,14 +186,14 @@
                     case 'locality':
                         document.getElementById('city').value = component.long_name;
                         break;
-                    case 'administrative_area_level_1':  
+                    case 'administrative_area_level_1':
                         document.getElementById('stateProvince').value = component.short_name;
                         break;
                     case 'postal_code':
                         document.getElementById('zipCode').value = component.long_name;
                         break;
                 }
-            }
+            });
 
             map.setCenter(place.geometry.location);
             map.setZoom(15);
@@ -106,22 +201,33 @@
             if (marker) {
                 marker.setPosition(place.geometry.location);
             } else {
-                // Create a new marker
                 marker = new google.maps.Marker({
                     position: place.geometry.location,
                     map: map
                 });
             }
         });
+    }
+
+    document.getElementById('artworkSpecialization').addEventListener('change', function () {
+        var otherField = document.getElementById('artworkOther');
+        if (this.value === 'Other') {
+            otherField.style.display = 'block';
+        } else {
+            otherField.style.display = 'none';
+            otherField.value = '';
         }
+    });
+    document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('form').addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                }
-            });
-        });
+    document.getElementById('chargeTravelFeesYes').addEventListener('change', function () {
+        document.getElementById('travelFeeDetails').style.display = 'block';
+    });
+    document.getElementById('chargeTravelFeesNo').addEventListener('change', function () {
+        document.getElementById('travelFeeDetails').style.display = 'none';
+        document.getElementById('travelFeeAmount').value = '';
+        document.getElementById('feeType').value = '';
+    });
 
-    window.onload = initMap; 
+    window.onload = initMap;
 </script>
