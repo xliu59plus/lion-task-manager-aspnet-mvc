@@ -32,6 +32,7 @@
 //     public string LatAndLongitude { get; set; } = string.Empty;
 // }
 using System.ComponentModel.DataAnnotations;
+using LionTaskManagementApp.Models;
 
 namespace LionTaskManagementApp.Models
 {
@@ -39,7 +40,7 @@ namespace LionTaskManagementApp.Models
     {
         [Required]
         public string UserId { get; set; } = string.Empty; // Associate with the user
-
+       // public bool IsApproved { get; set; } = false;
         // Contact Profile
         [Required]
         public string CompanyName { get; set; } = string.Empty;

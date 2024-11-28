@@ -29,8 +29,8 @@ namespace LionTaskManagementApp.Controllers
             return View();
         }
 
-        [HttpPost]
-        [Authorize(Roles="Taker, Inactive_Taker, Admin")]  
+        //[HttpPost]
+        //[Authorize(Roles="Taker, Inactive_Taker, Admin")]  
         // public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model) 
         // {
         //     var user = await _userManager.GetUserAsync(User);
@@ -72,9 +72,13 @@ namespace LionTaskManagementApp.Controllers
 [Authorize(Roles = "Taker, Inactive_Taker, Admin")]
 public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,IFormFile BusinessDocumentationUpload)
 {
+    Console.WriteLine("Check if businessDocumentationUpload is null : " + BusinessDocumentationUpload == null);
+    Console.WriteLine(BusinessDocumentationUpload);
+
     var user = await _userManager.GetUserAsync(User);
     if (user != null)
     {
+        return RedirectToAction("Index", "Home");
         // 1. Update ContractorInfo
         var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(c => c.UserId == user.Id);
         if (contractorInfo == null)
@@ -111,6 +115,7 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
             // Generate a unique file name
             var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(BusinessDocumentationUpload.FileName);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            Console.WriteLine("storing to file path: " + filePath);
 
             // Save the file to the specified path
             using (var fileStream = new FileStream(filePath, FileMode.Create))

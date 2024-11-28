@@ -7,7 +7,8 @@ namespace LionTaskManagementApp.Areas.Identity.Data
     {
         [Key]
         public string UserId { get; set; } = string.Empty; // User identifier
-
+       // public bool IsApproved { get; set;} = false;
+        
         // Business Information
         public string CompanyName { get; set; } = string.Empty; // Business Name
         public string EIN { get; set; } = string.Empty; // Employer Identification Number

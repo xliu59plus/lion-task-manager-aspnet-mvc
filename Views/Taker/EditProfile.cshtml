@@ -8,8 +8,8 @@
     <h4>Business and Social Media Links</h4>
     <hr>
       <div class="form-group">
-        <label asp-for="EIN">Company name:</label>
-        <input asp-for="EIN" class="form-control" placeholder="Enter your Company Name" />
+        <label asp-for="CompanyName">Company name:</label>
+        <input asp-for="CompanyName" class="form-control" placeholder="Enter your Company Name" />
     </div>
     <div class="form-group">
         <label asp-for="EIN">EIN:</label>
@@ -17,9 +17,9 @@
     </div>
     <div class="form-group">
         <label>Business Organization Documentation (Upload):</label>
-        <input type="file" class="form-control-file" id="BusinessDocumentationUpload" />
+        <input type="file" class="form-control-file" id="BusinessDocumentationUpload" name="BusinessDocumentationUpload"/>
     </div>
-    <div class="form-group">
+    @* <div class="form-group">
         <label asp-for="FacebookLink">Facebook:</label>
         <input asp-for="FacebookLink" class="form-control" />
     </div>
@@ -33,28 +33,38 @@
     </div>
      <!-- Address -->
     <h4>Address Information</h4>
-    <hr>
+ <h4>Address Information</h4>
+    <div class="form-group">
+        <label asp-for="FullAddress">Address:</label> 
+        <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address"/> 
+    </div>
+
     <div class="form-group">
         <label asp-for="FirstLine">Address Line 1:</label>
-        <input asp-for="FirstLine" class="form-control" id="firstLine" readonly />
+        <input asp-for="FirstLine" class="form-control" id="firstLine" placeholder="Enter Address Line 1"/>
     </div>
+
     <div class="form-group">
         <label asp-for="SecondLine">Address Line 2:</label>
-        <input asp-for="SecondLine" class="form-control" id="secondLine" />
+        <input asp-for="SecondLine" class="form-control" id="secondLine" placeholder="Enter Address Line 2"/>
     </div>
-    <div class="form-group">
-        <label asp-for="City">City:</label>
-        <input asp-for="City" class="form-control" id="city" readonly />
-    </div>
+
     <div class="form-group">
         <label asp-for="StateProvince">State/Province:</label>
-        <input asp-for="StateProvince" class="form-control" id="stateProvince" readonly />
+        <input asp-for="StateProvince" class="form-control" id="stateProvince" placeholder="Enter State/Province"/>
     </div>
+
+    <div class="form-group">
+        <label asp-for="City">City:</label>
+        <input asp-for="City" class="form-control" id="city" placeholder="Enter City"/>
+    </div>
+
     <div class="form-group">
         <label asp-for="ZipCode">Zip Code:</label>
-        <input asp-for="ZipCode" class="form-control" id="zipCode" readonly />
+        <input asp-for="ZipCode" class="form-control" id="zipCode" placeholder="Enter Zip Code"/>
     </div>
-    
+
+
     <h4>Work Preferences</h4>
     <!-- Wallpen E2 Machine Information -->
     <h5>Wallpen E2 Machine Information</h5>
@@ -138,31 +148,30 @@
                 <option value="OneTime">One Time Fee</option>
             </select>
         </div>
-    </div>
+    </div> *@
 
     <button type="submit" class="btn btn-primary">Submit</button>
 
 </form>
 
-<!-- Map -->
-<div id="map" style="height: 400px; width: 100%;"></div>
-
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
 
-<script>
+<div id="map" style="height: 400px; width: 100%;"></div>
+
+
+@* <script>
     let map;
     let marker;
-
     function initMap() {
+        // Initialize the map (you might want to center it based on user's location or a default)
         var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: 37.0902, lng: -95.7129 }, // Center on the USA
-            zoom: 4 // National-level zoom
+            center: { lat: -34.397, lng: 150.644 }, // Default location
+            zoom: 8
         });
 
+        // Autocomplete for the address input
         var input = document.getElementById('addressInput');
-        var autocomplete = new google.maps.places.Autocomplete(input, {
-            componentRestrictions: { country: "us" } // Restrict to the USA
-        });
+        var autocomplete = new google.maps.places.Autocomplete(input);
 
         autocomplete.addListener('place_changed', function() {
             var place = autocomplete.getPlace();
@@ -171,10 +180,15 @@
                 return;
             }
 
+            // Get latitude and longitude
             var lat = place.geometry.location.lat();
             var lng = place.geometry.location.lng();
+            document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
+
+            // Populate address components
             var addressComponents = place.address_components;
-            addressComponents.forEach(function(component) {
+            for (var i = 0; i < addressComponents.length; i++) {
+                var component = addressComponents[i];
                 var componentType = component.types[0];
                 switch (componentType) {
                     case 'street_number':
@@ -186,14 +200,14 @@
                     case 'locality':
                         document.getElementById('city').value = component.long_name;
                         break;
-                    case 'administrative_area_level_1':
+                    case 'administrative_area_level_1':  
                         document.getElementById('stateProvince').value = component.short_name;
                         break;
                     case 'postal_code':
                         document.getElementById('zipCode').value = component.long_name;
                         break;
                 }
-            });
+            }
 
             map.setCenter(place.geometry.location);
             map.setZoom(15);
@@ -201,33 +215,22 @@
             if (marker) {
                 marker.setPosition(place.geometry.location);
             } else {
+                // Create a new marker
                 marker = new google.maps.Marker({
                     position: place.geometry.location,
                     map: map
                 });
             }
         });
-    }
-
-    document.getElementById('artworkSpecialization').addEventListener('change', function () {
-        var otherField = document.getElementById('artworkOther');
-        if (this.value === 'Other') {
-            otherField.style.display = 'block';
-        } else {
-            otherField.style.display = 'none';
-            otherField.value = '';
         }
-    });
-    document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
 
-    document.getElementById('chargeTravelFeesYes').addEventListener('change', function () {
-        document.getElementById('travelFeeDetails').style.display = 'block';
-    });
-    document.getElementById('chargeTravelFeesNo').addEventListener('change', function () {
-        document.getElementById('travelFeeDetails').style.display = 'none';
-        document.getElementById('travelFeeAmount').value = '';
-        document.getElementById('feeType').value = '';
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('form').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                }
+            });
+        });
 
-    window.onload = initMap;
-</script>
+    window.onload = initMap; 
+</script> *@

@@ -54,15 +54,44 @@ app.MapRazorPages();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TaskUser>>();
 
-    foreach (var roleName  
- in new[] { "Admin", "ViceAdmin", "Inactive_Poster", "Poster", "Inactive_Taker", "Taker" })
+    var roles = new[] { "Admin","ViceAdmin","Inactive_Poster","Poster","Inactive_Taker","Taker"};
+
+
+    foreach (var roleName in roles)
     {
         if (!await roleManager.RoleExistsAsync(roleName))
         {
             await roleManager.CreateAsync(new IdentityRole(roleName));
         }
     }
+    // check and create default admin 
+    var adminEmail = "admin@example.com";
+    var adminPassword = "Admin123!";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new TaskUser
+        {
+          UserName = adminEmail,
+          Email = adminEmail,
+          EmailConfirmed = true
+        };
+        var result = await userManager.CreateAsync(adminUser,adminPassword);
+
+        if(result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser,"Admin");
+        }
+        else
+        {
+          Console.WriteLine("Failed to create default admin user");
+        }
+    }
+
 }
 
 app.Run();
+
+
