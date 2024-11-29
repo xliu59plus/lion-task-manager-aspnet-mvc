@@ -3,6 +3,7 @@ using System;
 using LionTaskManagementApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionTaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241118071457_UpdateContractorInfo")]
+    partial class UpdateContractorInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,67 +33,12 @@ namespace LionTaskManagementApp.Migrations
                     b.Property<DateTimeOffset>("ActivatedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("AdditionalNotes")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ArtworkSpecialization")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BankingInfo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BusinessDocumentationLink")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("CMYKPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal?>("CMYKWhiteColorPrice")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("ChargeTravelFeesOverLimit")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("CostPerSqrFoot")
                         .HasColumnType("numeric");
-
-                    b.Property<bool>("DoesPrintWhiteColor")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("EIN")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FacebookLink")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstLine")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("FullAddress")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("InstagramLink")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("LatAndLongitude")
                         .IsRequired()
@@ -101,39 +49,6 @@ namespace LionTaskManagementApp.Migrations
 
                     b.Property<DateTimeOffset>("ProfileSubmitTime")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SecondLine")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("StateProvince")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("SupportsCMYK")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("TikTokLink")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("TravelFeeOverLimit")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("WallpenHubProfileLink")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WallpenMachineModel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WallpenSerialNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal?>("WhiteColorPrice")
-                        .HasColumnType("numeric");
 
                     b.Property<string>("ZipCode")
                         .IsRequired()
