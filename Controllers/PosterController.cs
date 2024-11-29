@@ -59,7 +59,7 @@ namespace LionTaskManagementApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Poster,Admin")]
-        public async Task<IActionResult> TaskCreate([Bind("OwnerId,Title,Description,Length,Height,Location")] TaskModel taskModel)
+        public async Task<IActionResult> TaskCreate(TaskModel taskModel)
         {
             ModelState.Remove("Status");
             if (!ModelState.IsValid)

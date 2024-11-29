@@ -14,6 +14,9 @@ public class TaskModel
     public string Title { get; set; } = string.Empty;
 
     [Required]
+    public decimal Budget { get; set; }
+
+    [Required]
     public string Description { get; set; } = string.Empty;
 
     [Required]
@@ -30,12 +33,27 @@ public class TaskModel
     public string Status { get; set; } = string.Empty;
 
     [Required]
-    public string Location { get; set; } = string.Empty;
+    public string FullAddress { get; set; } = string.Empty;
+
+    [Required]
+    public string FirstLine { get; set; } = string.Empty;
+
+    public string? SecondLine { get; set; }
+
+    [Required]
+    public string StateProvince { get; set; } = string.Empty;
+
+    [Required]
+    public string City { get; set; } = string.Empty;
+
+    [Required]
+    public string ZipCode { get; set; } = string.Empty;
+
+    [Required]
+    public string LatAndLongitude { get; set; } = string.Empty;
 
     public string? TakenById { get; set; }
 
     [Required]
     public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.MinValue;
 }
-
-// dotnet aspnet-codegenerator controller -name TasksController -m LionTaskManagementApp.Models.Task -dc ApplicationDbContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries *@
