@@ -55,11 +55,7 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                @if (!string.IsNullOrEmpty(item.TakenById))
-                {
-                    var user = await UserManager.FindByIdAsync(item.TakenById);
-                    @user.UserName
-                }
+                @Html.DisplayFor(modelItem => item.TakenById)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedTime)

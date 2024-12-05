@@ -251,11 +251,11 @@ namespace LionTaskManagementApp.Controllers
 
         [Authorize(Roles = "Poster,Admin")]
         // GET: Poster/ApproveRequest
-        public async Task<IActionResult> ApproveRequest(int taskId, string userId)
+        public async Task<IActionResult> ApproveRequest(int taskId, string username)
         {
             Console.WriteLine("ApproveRequest hit");
 
-            if (userId == null)
+            if (username == null)
             {
                 return NotFound();
             }
@@ -266,7 +266,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            taskModel.TakenById = userId;
+            taskModel.TakenById = username;
 
             _context.SaveChanges();
             return RedirectToAction("TaskDetails", "Poster", new { id = taskId });

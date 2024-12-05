@@ -198,9 +198,9 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
         {
             var currentUserId = User.Identity?.Name;
             var userTasks = await _context.Tasks
-                                  .Where(t => t.OwnerId == currentUserId || t.Status.Equals(MyTaskStatus.Initialized))
+                                  .Where(t => t.Status.Equals(MyTaskStatus.Initialized.ToString()) || t.TakenById.Equals(currentUserId))
                                   .ToListAsync();
-            // return View(userTasks);
+           // return View(userTasks);
             return View(await _context.Tasks.ToListAsync());
         }
 

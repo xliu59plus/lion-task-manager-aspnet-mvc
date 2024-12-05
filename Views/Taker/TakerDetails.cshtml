@@ -67,19 +67,18 @@
         <a asp-action="RequestTask" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="true" class="btn btn-success">Pick</a>
         <a asp-action="RequestTask" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="false" class="btn btn-secondary">Not Interested</a>
     }
-    else if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && Model.TakenById.Equals(UserManager.GetUserId(User)))
+    else if (Model.Status.Equals(MyTaskStatus.Initialized.ToString()) && Model.TakenById.Equals(User.Identity.Name))
     {
         <a asp-action="ProcessToInProgress" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="true" class="btn btn-primary">Start the Work</a>
         <a asp-action="ProcessToInProgress" asp-controller="Taker" asp-route-taskId="@Model?.Id" asp-route-doAccept="false" class="btn btn-danger">Decline</a>
     }
-    else if (Model.Status.Equals(MyTaskStatus.InProgress.ToString()) && Model.TakenById.Equals(UserManager.GetUserId(User)))
+    else if (Model.Status.Equals(MyTaskStatus.InProgress.ToString()) && Model.TakenById.Equals(User.Identity.Name))
     {
         <a asp-action="RequestProjectComplete" asp-controller="Taker" asp-route-taskId="@Model?.Id" class="btn btn-success">Complete Project</a>
     } else if(Model.Status.Equals(MyTaskStatus.Completed.ToString()))
     {
-        var user = await UserManager.FindByIdAsync(Model.TakenById);
         <div id="notification-bar" class="alert alert-success">
-            <span> @user.Name</span> completed the task!
+            <span> @User.Identity.Name</span> completed the task!
         </div>
     }
 </div>

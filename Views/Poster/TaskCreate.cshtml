@@ -83,7 +83,7 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
 
 <script>
-    function initAutoCompete() {
+    function initAutoComplete() {
 
         // Autocomplete for the address input
         var input = document.getElementById('addressInput');
@@ -94,6 +94,7 @@
             if (!place.geometry) {
                 console.log("Autocomplete's returned place contains no geometry");
                 return;
+
             }
 
             // Get latitude and longitude
@@ -105,7 +106,8 @@
             var addressComponents = place.address_components;
             for (var i = 0; i < addressComponents.length; i++) {
                 var component = addressComponents[i];
-                var componentType = component.types[0];
+                var
+                    componentType = component.types[0];
                 switch (componentType) {
                     case 'street_number':
                         document.getElementById('firstLine').value = component.long_name;
@@ -117,7 +119,8 @@
                         document.getElementById('city').value = component.long_name;
                         break;
                     case 'administrative_area_level_1':
-                        document.getElementById('stateProvince').value = component.short_name;
+                        document.getElementById('stateProvince').value
+                            = component.short_name;
                         break;
                     case 'postal_code':
                         document.getElementById('zipCode').value = component.long_name;
@@ -133,7 +136,8 @@
                 event.preventDefault();
             }
         });
-    });
 
-    window.onload = initMap;
+        // Call initAutoComplete after the DOM is loaded
+        initAutoComplete();
+    });
 </script>
