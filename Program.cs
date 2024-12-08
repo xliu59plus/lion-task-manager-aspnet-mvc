@@ -3,6 +3,7 @@ using LionTaskManagementApp.Data;
 using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Stripe;
+using LionTaskManagementApp.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 // Stripe: besk-hcwu-cqub-khtj-cfvq
@@ -17,11 +18,6 @@ builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireC
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
-
-// builder.Services.AddHttpsRedirection(options =>
-// {
-//     options.HttpsPort = 7227;
-// });
 
 var app = builder.Build();
 
@@ -56,40 +52,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TaskUser>>();
 
-    var roles = new[] { "Admin","ViceAdmin","Inactive_Poster","Poster","Inactive_Taker","Taker"};
-
-
-    foreach (var roleName in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(roleName))
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-        }
-    }
-    // check and create default admin 
-    var adminEmail = "admin@example.com";
-    var adminPassword = "Admin123!";
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        adminUser = new TaskUser
-        {
-          UserName = adminEmail,
-          Email = adminEmail,
-          EmailConfirmed = true
-        };
-        var result = await userManager.CreateAsync(adminUser,adminPassword);
-
-        if(result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(adminUser,"Admin");
-        }
-        else
-        {
-          Console.WriteLine("Failed to create default admin user");
-        }
-    }
-
+    await UserInitializer.Initialize(userManager, roleManager);
 }
 
 app.Run();
