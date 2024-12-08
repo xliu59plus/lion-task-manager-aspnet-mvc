@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using LionTaskManagementApp.Areas.Identity.Data;
 using LionTaskManagementApp.Models;
+using LionTaskManagementApp.Models.Poster;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -156,44 +157,73 @@ namespace LionTaskManagementApp.Controllers
 
         [HttpPost]
         [Authorize(Roles="Poster, Inactive_Poster, Admin")]   
-        public async Task<IActionResult> EditProfilePoster()
+        public async Task<IActionResult> EditProfilePoster(PosterInfoViewModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user != null)
+            if (ModelState.IsValid)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                var resultRemove = await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
-                var resultAdd = await _userManager.AddToRoleAsync(user, "Poster");
-
-                if (resultRemove.Succeeded && resultAdd.Succeeded)
+                var user = await _userManager.GetUserAsync(User);
+                if (user != null)
                 {
-                    await _context.SaveChangesAsync();    
-                    
-                    // 1. Refresh the user object from the database
-                    await _context.Entry(user).ReloadAsync();
+                    var modelToStore = new PosterInfo
+                    {
+                        PosterId = user.Id,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        PhoneNumber = model.PhoneNumber,
+                        CompanyName = model.CompanyName,
+                        AddressLine1 = model.AddressLine1,
+                        AddressLine2 = model.AddressLine2,
+                        City = model.City,
+                        StateProvince = model.StateProvince,
+                        Zipcode = model.Zipcode,
+                        EIN = model.EIN,
+                        IndustryInformation = model.IndustryInformation
+                    };
 
-                    // 2. Update the user's claims principal 
-                    await _signInManager.RefreshSignInAsync(user); 
-                    
-                    TempData["SuccessMessage"] = "You are an active user now";
-                    TempData.Keep("SuccessMessage");
+                    _context.PosterInfos.Add(modelToStore);
+                    await _context.SaveChangesAsync();
+
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var resultRemove = await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
+                    var resultAdd = await _userManager.AddToRoleAsync(user, "Poster");
+
+                    if (resultRemove.Succeeded && resultAdd.Succeeded)
+                    {
+                        await _context.SaveChangesAsync();
+
+                        // 1. Refresh the user object from the database
+                        await _context.Entry(user).ReloadAsync();
+
+                        // 2. Update the user's claims principal 
+                        await _signInManager.RefreshSignInAsync(user);
+
+                        TempData["SuccessMessage"] = "You are an active user now";
+                        TempData.Keep("SuccessMessage");
+                    }
+                    else
+                    {
+                        // Handle role update failures (e.g., log errors, display a message)
+                        foreach (var error in resultRemove.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        foreach (var error in resultAdd.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        // You might want to return to the edit view with error messages
+                        return View(); // Or return View("YourEditViewName"); 
+                    }
                 }
                 else
                 {
-                    // Handle role update failures (e.g., log errors, display a message)
-                    foreach (var error in resultRemove.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                    foreach (var error in resultAdd.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                    // You might want to return to the edit view with error messages
-                    return View(); // Or return View("YourEditViewName"); 
+                    Console.WriteLine("User Not Exist");
                 }
             }
-
+            else 
+            {
+                Console.WriteLine("Model is not Valid");
+            }
             
             return RedirectToAction("Index", "Home"); // Or wherever you want to redirect
         }

@@ -215,6 +215,60 @@ namespace LionTaskManagementApp.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("LionTaskManagementApp.Models.Poster.PosterInfo", b =>
+                {
+                    b.Property<string>("PosterId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AddressLine2")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EIN")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IndustryInformation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("StateProvince")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Zipcode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("PosterId");
+
+                    b.ToTable("PosterInfos");
+                });
+
             modelBuilder.Entity("LionTaskManagementApp.Models.TaskModel", b =>
                 {
                     b.Property<int>("Id")
@@ -222,6 +276,13 @@ namespace LionTaskManagementApp.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
@@ -234,21 +295,36 @@ namespace LionTaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FirstLine")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<float>("Height")
                         .HasColumnType("real");
 
-                    b.Property<float>("Length")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Location")
+                    b.Property<string>("LatAndLongitude")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<float>("Length")
+                        .HasColumnType("real");
 
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RequestList")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SecondLine")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StateProvince")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -260,6 +336,10 @@ namespace LionTaskManagementApp.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ZipCode")
                         .IsRequired()
                         .HasColumnType("text");
 

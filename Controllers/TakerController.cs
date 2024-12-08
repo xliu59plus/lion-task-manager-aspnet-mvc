@@ -78,7 +78,6 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
     var user = await _userManager.GetUserAsync(User);
     if (user != null)
     {
-        return RedirectToAction("Index", "Home");
         // 1. Update ContractorInfo
         var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(c => c.UserId == user.Id);
         if (contractorInfo == null)
@@ -294,8 +293,13 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
         [Authorize(Roles = "Taker, Admin")]
         public IActionResult ProcessToInProgress(int taskId, bool doAccept)
         {
+            if (User == null) { 
+                return NotFound();
+            }
+
             // 1. Get the current user's ID
             string currentUserId = _userManager.GetUserId(User);
+
 
             // 2. Check if the task exists
             var task = _context.Tasks.Find(taskId); // Assuming 'Tasks' is your DbSet
