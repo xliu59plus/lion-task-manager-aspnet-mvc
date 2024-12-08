@@ -89,5 +89,32 @@ namespace LionTaskManagementApp.Services
                 throw;
             }
         }
+
+        public async Task<string> GetPreSignedUrlAsync(string keyName, TimeSpan expiry)
+        {
+            try
+            {
+                var request = new GetPreSignedUrlRequest
+                {
+                    BucketName = _bucketName,
+                    Key = keyName,
+                    Expires = DateTime.UtcNow + expiry,
+                    Verb = HttpVerb.GET
+                };
+
+                string url = await _s3Client.GetPreSignedURLAsync(request);
+                return url;
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when generating pre-signed URL", e.Message);
+                throw;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when generating pre-signed URL", e.Message);
+                throw;
+            }
+        }
     }
 }
