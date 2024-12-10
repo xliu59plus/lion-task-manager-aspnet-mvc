@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http; // For IFormFile
 
 namespace LionTaskManagementApp.Models;
 
 public class TaskModel
 {
-    [Key]  // This explicitly marks Id as the primary key
+    [Key]
     public int Id { get; set; }
 
     [Required]
@@ -20,10 +22,10 @@ public class TaskModel
     public string Description { get; set; } = string.Empty;
 
     [Required]
-    public float Length {get; set;} = 0;
+    public float Length { get; set; } = 0;
 
     [Required]
-    public float Height {get; set;} = 0;
+    public float Height { get; set; } = 0;
 
     public string DeniedList { get; set; } = string.Empty;
 
@@ -56,4 +58,29 @@ public class TaskModel
 
     [Required]
     public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.MinValue;
+
+    // New properties
+    [Required]
+    public DateTimeOffset Deadline { get; set; } = DateTimeOffset.MinValue;
+
+    [Required]
+    public int ProjectResolution { get; set; }
+
+    [Required]
+    public string IndoorOutdoor { get; set; } = string.Empty;
+
+    public string? WallType { get; set; }
+
+    [NotMapped]
+    public IFormFile? WallPic { get; set; }
+
+    [NotMapped]
+    public IFormFile? Artwork { get; set; }
+
+    [Required]
+    public bool DowngradeResolution { get; set; }
+
+    public string? WallPicKey { get; set; }
+
+    public string? ArtworkKey { get; set; }
 }

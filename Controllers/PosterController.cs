@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using LionTaskManagementApp.Areas.Identity.Data;
 using LionTaskManagementApp.Models;
 using LionTaskManagementApp.Models.Poster;
+using LionTaskManagementApp.Services;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -13,14 +14,15 @@ namespace LionTaskManagementApp.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<TaskUser> _userManager;
-
         private readonly SignInManager<TaskUser> _signInManager;
+        private readonly S3Service _s3Service;
 
-        public PosterController(ApplicationDbContext context, UserManager<TaskUser> userManager, SignInManager<TaskUser> signInManager)
+        public PosterController(ApplicationDbContext context, UserManager<TaskUser> userManager, SignInManager<TaskUser> signInManager, S3Service s3Service)
         {
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
+            _s3Service = s3Service;
         }
 
         [Authorize(Roles = "Poster,Admin")]
@@ -75,6 +77,8 @@ namespace LionTaskManagementApp.Controllers
                         // You can also inspect error.Exception if an exception was thrown
                     }
                 }
+
+                return View();
             }
 
             if (ModelState.IsValid)
@@ -84,6 +88,55 @@ namespace LionTaskManagementApp.Controllers
                 taskModel.CreatedTime = DateTimeOffset.UtcNow;  // Set the current timestamp for CreatedTime
                 taskModel.Status = MyTaskStatus.Initialized.ToString();
 
+                // Handle file uploads (if any)
+                if (taskModel.WallPic != null && taskModel.WallPic.Length > 0)
+                {
+                    // 1. Create a temporary file
+                    string tempFilePath = Path.GetTempFileName();
+
+                    // 2. Save the uploaded file to the temporary location
+                    using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                    {
+                        await taskModel.WallPic.CopyToAsync(stream);
+                    }
+
+                    // 3. Upload to S3 from the temporary file
+                    string key = $"wallpics/{Guid.NewGuid()}_{taskModel.WallPic.FileName}";
+                    await _s3Service.UploadFileAsync(tempFilePath, key);
+
+                    // 4. Get the pre-signed URL
+                    string uploadedWallPicUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
+                    taskModel.WallPicKey = key;
+
+                    // 5. Delete the temporary file
+                    System.IO.File.Delete(tempFilePath);
+                }
+
+                if (taskModel.Artwork != null && taskModel.Artwork.Length > 0)
+                {
+                    // 1. Create a temporary file
+                    string tempFilePath = Path.GetTempFileName();
+
+                    // 2. Save the uploaded file to the temporary location
+                    using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                    {
+                        await taskModel.Artwork.CopyToAsync(stream);
+                    }
+
+                    // 3. Upload to S3 from the temporary file
+                    string key = $"artworks/{Guid.NewGuid()}_{taskModel.Artwork.FileName}";
+                    await _s3Service.UploadFileAsync(tempFilePath, key);
+
+                    // 4. Get the pre-signed URL
+                    string uploadedArtworkUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
+                    taskModel.ArtworkKey = key;
+
+                    // 5. Delete the temporary file
+                    System.IO.File.Delete(tempFilePath);
+                }
+
+                // Convert Deadline to UTC
+                taskModel.Deadline = taskModel.Deadline.UtcDateTime;
                 // Add the task to the context and save changes
                 _context.Add(taskModel);
                 await _context.SaveChangesAsync();

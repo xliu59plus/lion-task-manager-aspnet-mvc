@@ -15,9 +15,9 @@ namespace LionTaskManagementApp.Services
             try
             {
                 // Use your preferred method for credential configuration
-                _bucketName = Environment.GetEnvironmentVariable("HEROKU_S3_BUCKET_NAME");
-                var accessKeyId = Environment.GetEnvironmentVariable("HEROKU_S3_ACCESS_KEY_ID");
-                var secretAccessKey = Environment.GetEnvironmentVariable("HEROKU_S3_SECRET_ACCESS_KEY");
+                _bucketName = Environment.GetEnvironmentVariable("HEROKU_S3_BUCKET_NAME").Trim();
+                var accessKeyId = Environment.GetEnvironmentVariable("HEROKU_S3_ACCESS_KEY_ID").Trim();
+                var secretAccessKey = Environment.GetEnvironmentVariable("HEROKU_S3_SECRET_ACCESS_KEY").Trim();
                 if (_bucketName == null || accessKeyId == null || secretAccessKey == null)
                 {
                     throw new Exception("_bucketName or accessKeyId or secretAccessKey is null, unable to create S3 Client");

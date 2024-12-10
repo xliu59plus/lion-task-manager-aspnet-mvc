@@ -4,6 +4,7 @@ using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Stripe;
 using LionTaskManagementApp.Utils;
+using LionTaskManagementApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Stripe: besk-hcwu-cqub-khtj-cfvq
@@ -18,6 +19,8 @@ builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireC
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<S3Service>();
 
 var app = builder.Build();
 
