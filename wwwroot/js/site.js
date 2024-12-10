@@ -1,37 +1,74 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿/*!
+ * Start Bootstrap - Grayscale v7.0.6 (https://startbootstrap.com/theme/grayscale)
+ * Copyright 2013-2023 Start Bootstrap
+ * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-grayscale/blob/master/LICENSE)
+ */
 
-// Write your JavaScript code.
-document.addEventListener("DOMContentLoaded", function () {
+// Scripts
+window.addEventListener("DOMContentLoaded", (event) => {
+  // Navbar shrink function
+  var navbarShrink = function () {
+    const navbarCollapsible = document.body.querySelector("#mainNav");
+    if (!navbarCollapsible) {
+      return;
+    }
+    if (window.scrollY === 0) {
+      navbarCollapsible.classList.remove("navbar-shrink");
+    } else {
+      navbarCollapsible.classList.add("navbar-shrink");
+    }
+  };
+
+  // Shrink the navbar
+  navbarShrink();
+
+  // Shrink the navbar when page is scrolled
+  document.addEventListener("scroll", navbarShrink);
+
+  // Activate Bootstrap scrollspy on the main nav element
+  const mainNav = document.body.querySelector("#mainNav");
+  if (mainNav) {
+    new bootstrap.ScrollSpy(document.body, {
+      target: "#mainNav",
+      rootMargin: "0px 0px -40%",
+    });
+  }
+
+  // Collapse responsive navbar when toggler is visible
+  const navbarToggler = document.body.querySelector(".navbar-toggler");
+  const responsiveNavItems = [].slice.call(
+    document.querySelectorAll("#navbarResponsive .nav-link")
+  );
+  responsiveNavItems.map(function (responsiveNavItem) {
+    responsiveNavItem.addEventListener("click", () => {
+      if (window.getComputedStyle(navbarToggler).display !== "none") {
+        navbarToggler.click();
+      }
+    });
+  });
+
+  // Custom JavaScript logic (your script starts here)
   const steps = document.querySelectorAll(".form-step");
   const progressBar = document.getElementById("progressBar");
   let currentStep = 0;
   const fieldMapping = {
-    // Business Information
     CompanyName: "reviewCompanyName",
     EIN: "reviewEIN",
-
-    // Address Information
     addressInput: "reviewFullAddress",
     firstLine: "reviewFirstLine",
     secondLine: "reviewSecondLine",
     city: "reviewCity",
     stateProvince: "reviewStateProvince",
     zipCode: "reviewZipCode",
-
-    // Work Preferences
     WallpenMachineModel: "reviewWallpenMachineModel",
     WallpenSerialNumber: "reviewWallpenSerialNumber",
-
-    // Pricing Information
     CMYKPrice: "reviewCMYKPrice",
     WhitePrice: "reviewWhitePrice",
     CMYKWhitePrice: "reviewCMYKWhitePrice",
-
-    // Social Media Links
     FacebookLink: "reviewFacebookLink",
     TikTokLink: "reviewTikTokLink",
   };
+
   function showStep(index) {
     steps.forEach((step, i) => {
       step.classList.toggle("d-none", i !== index);
@@ -41,7 +78,6 @@ document.addEventListener("DOMContentLoaded", function () {
     progressBar.textContent = `Step ${index + 1} of ${stepCount}`;
   }
 
-  // Review
   function populateReview() {
     Object.entries(fieldMapping).forEach(([formFieldId, reviewFieldId]) => {
       const formField = document.getElementById(formFieldId);
@@ -65,7 +101,6 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector('input[name="chargeTravelFees"]:checked')?.value ||
       "N/A";
 
-    // Artwork Specialization
     const artworkSpecialization = document.getElementById(
       "artworkSpecialization"
     )?.value;
@@ -76,16 +111,13 @@ document.addEventListener("DOMContentLoaded", function () {
         ? artworkOtherInput
         : artworkSpecialization || "N/A";
 
-    // Travel Fee
     document.getElementById("reviewTravelFeeAmount").textContent =
       document.getElementById("travelFeeAmount")?.value || "N/A";
   }
 
-  // next step button
   document.querySelectorAll(".next-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (currentStep < steps.length - 1) {
-        // 如果进入 Review 步骤，填充信息
         if (currentStep === steps.length - 2) {
           populateReview();
         }
@@ -95,7 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // preview button
   document.querySelectorAll(".prev-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (currentStep > 0) {
@@ -115,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const travelFeeNo = document.getElementById("travelFeeNo");
   const travelFeeDetails = document.getElementById("travelFeeDetails");
 
-  // Show/hide travel fee details
   if (travelFeeYes && travelFeeNo) {
     travelFeeYes.addEventListener("click", () => {
       travelFeeDetails.style.display = "block";
@@ -125,14 +155,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Show/hide "Other" input for Artwork Specialization
   if (artworkSpecializationSelect) {
     artworkSpecializationSelect.addEventListener("change", (event) => {
       if (event.target.value === "Other") {
         artworkOtherInput.classList.remove("d-none");
       } else {
         artworkOtherInput.classList.add("d-none");
-        artworkOtherInput.value = ""; // Clear "Other" input if not used
+        artworkOtherInput.value = "";
       }
     });
   }
