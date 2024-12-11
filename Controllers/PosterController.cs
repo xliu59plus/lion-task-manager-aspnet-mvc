@@ -314,6 +314,9 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
+            taskModel.WallPicUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.WallPicKey, TimeSpan.FromMinutes(10));
+            taskModel.ArtworkUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.ArtworkKey, TimeSpan.FromMinutes(10));
+
             return View(taskModel);
         }
 
