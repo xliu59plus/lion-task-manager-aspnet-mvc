@@ -82,5 +82,11 @@ public class TaskModel
 
     public string? WallPicKey { get; set; }
 
+    [NotMapped]
+    public string? WallPicUrl { get; set; }
+
     public string? ArtworkKey { get; set; }
+
+    [NotMapped]
+    public string? ArtworkUrl { get; set; }
 }

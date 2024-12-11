@@ -45,6 +45,9 @@ namespace LionTaskManagementApp.Controllers
 
             var taskModel = await _context.Tasks
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            taskModel.WallPicUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.WallPicKey, TimeSpan.FromMinutes(10));
+            taskModel.ArtworkUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.ArtworkKey, TimeSpan.FromMinutes(10));
             if (taskModel == null)
             {
                 return NotFound();
@@ -162,7 +165,137 @@ namespace LionTaskManagementApp.Controllers
             {
                 return NotFound();
             }
+
+            taskModel.WallPicUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.WallPicKey, TimeSpan.FromMinutes(10));
+            taskModel.ArtworkUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.ArtworkKey, TimeSpan.FromMinutes(10));
+
             return View(taskModel);
+        }
+
+        [Authorize(Roles = "Poster,Admin")]
+        [HttpPost]
+        public async Task<IActionResult> TaskEdit(TaskModel updatedTask)
+        {
+            ModelState.Remove("Status");
+            if (!ModelState.IsValid)
+            {
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        // Access error.ErrorMessage to see the specific validation error
+                        Console.WriteLine($"Error: {error.ErrorMessage}");
+
+                        // You can also inspect error.Exception if an exception was thrown
+                    }
+                }
+
+                return View();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Fetch the existing task from the database
+                    var existingTask = await _context.Tasks.FindAsync(updatedTask.Id);
+
+                    if (existingTask == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update the properties of the existing task with the values from taskModel
+                    existingTask.Title = updatedTask.Title;
+                    existingTask.Budget = updatedTask.Budget;
+                    existingTask.Length = updatedTask.Length;
+                    existingTask.Height = updatedTask.Height;
+                    existingTask.Description = updatedTask.Description;
+                    existingTask.FullAddress = updatedTask.FullAddress;
+                    existingTask.FirstLine = updatedTask.FirstLine;
+                    existingTask.SecondLine = updatedTask.SecondLine;
+                    existingTask.StateProvince = updatedTask.StateProvince;
+                    existingTask.City = updatedTask.City;
+                    existingTask.ZipCode = updatedTask.ZipCode;
+                    existingTask.LatAndLongitude= updatedTask.LatAndLongitude;
+                    existingTask.Deadline = updatedTask.Deadline.UtcDateTime;
+                    existingTask.ProjectResolution = updatedTask.ProjectResolution;
+                    existingTask.IndoorOutdoor = updatedTask.IndoorOutdoor;
+                    existingTask.WallType = updatedTask.WallType;
+                    existingTask.DowngradeResolution = updatedTask.DowngradeResolution;
+
+                    // Handle image uploads if new files are provided
+                    if (updatedTask.WallPic != null)
+                    {
+                        
+                    }
+
+                    if (updatedTask.Artwork != null)
+                    {
+                        
+                    }
+
+                    // Handle file uploads (if any)
+                    if (updatedTask.WallPic != null && updatedTask.WallPic.Length > 0)
+                    {
+                        // 1. Create a temporary file
+                        string tempFilePath = Path.GetTempFileName();
+
+                        // 2. Save the uploaded file to the temporary location
+                        using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                        {
+                            await updatedTask.WallPic.CopyToAsync(stream);
+                        }
+
+                        // 3. Upload to S3 from the temporary file
+                        string key = $"wallpics/{Guid.NewGuid()}_{updatedTask.WallPic.FileName}";
+                        await _s3Service.UploadFileAsync(tempFilePath, key);
+
+                        // 4. Get the pre-signed URL
+                        string uploadedWallPicUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
+                        updatedTask.WallPicKey = key;
+
+                        // 5. Delete the temporary file
+                        System.IO.File.Delete(tempFilePath);
+                    }
+
+                    if (updatedTask.Artwork != null && updatedTask.Artwork.Length > 0)
+                    {
+                        // 1. Create a temporary file
+                        string tempFilePath = Path.GetTempFileName();
+
+                        // 2. Save the uploaded file to the temporary location
+                        using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                        {
+                            await updatedTask.Artwork.CopyToAsync(stream);
+                        }
+
+                        // 3. Upload to S3 from the temporary file
+                        string key = $"artworks/{Guid.NewGuid()}_{updatedTask.Artwork.FileName}";
+                        await _s3Service.UploadFileAsync(tempFilePath, key);
+
+                        // 4. Get the pre-signed URL
+                        string uploadedArtworkUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
+                        updatedTask.ArtworkKey = key;
+
+                        // 5. Delete the temporary file
+                        System.IO.File.Delete(tempFilePath);
+                    }
+
+                    // Save changes to the database
+                    _context.Update(existingTask);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    Console.WriteLine("Something wrong when storing the picture into S3:" + ex.Message);
+                }
+            }
+
+            // If ModelState is not valid, return to the edit view with validation errors
+            return View(updatedTask);
         }
 
         // GET: Tasks/Delete/5

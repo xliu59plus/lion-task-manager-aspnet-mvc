@@ -4,27 +4,35 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Task Edit</h1>
 
-<h4>TaskModel</h4>
+<h4>Edit Task</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="TaskEdit">
+        <form asp-action="TaskEdit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="hidden" asp-for="OwnerId" value="@User.Identity?.Name" />
+            </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Length" class="control-label">Length (foot)</label>
+                <label asp-for="Budget" class="control-label"></label>
+                <input asp-for="Budget" class="form-control" />
+                <span asp-validation-for="Budget" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Length" class="control-label"></label>
                 <input asp-for="Length" class="form-control" />
                 <span asp-validation-for="Length" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Height" class="control-label">Height (foot)</label>
+                <label asp-for="Height" class="control-label"></label>
                 <input asp-for="Height" class="form-control" />
                 <span asp-validation-for="Height" class="text-danger"></span>
             </div>
@@ -33,6 +41,89 @@
                 <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="FullAddress">Address:</label>
+                <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address" />
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstLine">Address Line 1:</label>
+                <input asp-for="FirstLine" class="form-control" id="firstLine" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="SecondLine">Address Line 2:</label>
+                <input asp-for="SecondLine" class="form-control" id="secondLine" />
+            </div>
+            <div class="form-group">
+                <label asp-for="StateProvince">State/Province:</label>
+                <input asp-for="StateProvince" class="form-control" id="stateProvince" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="City">City:</label>
+                <input asp-for="City" class="form-control" id="city" readonly />
+            </div>
+            <div class="form-group">
+                <label asp-for="ZipCode">Zip Code:</label>
+                <input asp-for="ZipCode" class="form-control" id="zipCode" readonly />
+            </div>
+            <input type="hidden" asp-for="LatAndLongitude" id="LatAndLongitude" readonly />
+
+            <div class="form-group">
+                <label asp-for="Deadline" class="control-label"></label>
+                <input asp-for="Deadline" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="Deadline" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProjectResolution" class="control-label">Project Resolution (DPI):</label>
+                <select asp-for="ProjectResolution" class="form-control form-select">
+                    <option value="300">300</option>
+                    <option value="600">600</option>
+                    <option value="800">800</option>
+                    <option value="1200">1200</option>
+                </select>
+                <span asp-validation-for="ProjectResolution" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IndoorOutdoor" class="control-label">Indoor or Outdoor:</label>
+                <select asp-for="IndoorOutdoor" class="form-control form-select">
+                    <option value="Indoor">Indoor</option>
+                    <option value="Outdoor">Outdoor</option>
+                </select>
+                <span asp-validation-for="IndoorOutdoor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WallType" class="control-label"></label>
+                <input asp-for="WallType" class="form-control" />
+                <span asp-validation-for="WallType" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="WallPic" class="control-label">Wall Picture:</label>
+                <div class="image-upload" id="wallPicUpload" style="width: 200px; height: 200px; border: 1px dashed #ccc; text-align: center; line-height: 200px; cursor: pointer;">
+                    <img id="wallPicPreview" src="@Model.WallPicUrl" alt="Wall Picture Preview" style="max-width: 100%; max-height: 100%; @(Model.WallPicUrl == null ? "display: none;" : "display: block;")" />
+                    <input asp-for="WallPic" type="file" class="form-control-file" accept="image/*" style="display: none;" />
+                </div>
+                <span asp-validation-for="WallPic" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label asp-for="Artwork" class="control-label">Artwork:</label>
+                <div class="image-upload" id="artworkUpload" style="width: 200px; height: 200px; border: 1px dashed #ccc; text-align: center; line-height: 200px; cursor: pointer;">
+                    <img id="artworkPreview" src="@Model.ArtworkUrl" alt="Artwork Preview" style="max-width: 100%; max-height: 100%; @(Model.ArtworkUrl == null ? "display: none;" : "display: block;")" />
+                    <input asp-for="Artwork" type="file" class="form-control-file" accept="image/*" style="display: none;" />
+                </div>
+                <span asp-validation-for="Artwork" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DowngradeResolution" class="control-label">Will it downgrade the resolution?</label>
+                <select asp-for="DowngradeResolution" class="form-control form-select">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+                <span asp-validation-for="DowngradeResolution" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -44,6 +135,97 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
+
+<script>
+    function initAutoComplete() {
+        var input = document.getElementById('addressInput');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.addListener('place_changed', function () {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                console.log("Autocomplete's returned place contains no geometry");
+                return;
+            }
+
+            var lat = place.geometry.location.lat();
+            var lng = place.geometry.location.lng();
+            document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
+
+            var addressComponents = place.address_components;
+            for (var i = 0; i < addressComponents.length; i++) {
+                var component = addressComponents[i];
+                var componentType = component.types[0];
+                switch (componentType) {
+                    case 'street_number':
+                        document.getElementById('firstLine').value = component.long_name;
+                        break;
+                    case 'route':
+                        document.getElementById('firstLine').value += ' ' + component.short_name;
+                        break;
+                    case 'locality':
+                        document.getElementById('city').value = component.long_name;
+                        break;
+                    case 'administrative_area_level_1':
+                        document.getElementById('stateProvince').value = component.short_name;
+                        break;
+                    case 'postal_code':
+                        document.getElementById('zipCode').value = component.long_name;
+                        break;
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('form').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+            }
+        });
+
+        initAutoComplete();
+
+        // Image upload for WallPic
+        const wallPicUpload = document.getElementById('wallPicUpload');
+        const wallPicInput = wallPicUpload.querySelector('input[type="file"]');
+        const wallPicPreview = document.getElementById('wallPicPreview');
+
+        wallPicUpload.addEventListener('click', () => {
+            wallPicInput.click();
+        });
+
+        wallPicInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            handleFileUpload(file, wallPicPreview);
+        });
+
+        // Image upload for Artwork (similar logic to WallPic)
+        const artworkUpload = document.getElementById('artworkUpload');
+        const artworkInput = artworkUpload.querySelector('input[type="file"]');
+        const artworkPreview = document.getElementById('artworkPreview');
+
+        artworkUpload.addEventListener('click', () => {
+            artworkInput.click();
+        });
+
+        artworkInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            handleFileUpload(file, artworkPreview);
+        });
+    });
+
+    function handleFileUpload(file, preview) {
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
