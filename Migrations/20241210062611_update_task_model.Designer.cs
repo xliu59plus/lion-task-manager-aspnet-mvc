@@ -3,6 +3,7 @@ using System;
 using LionTaskManagementApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionTaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241210062611_update_task_model")]
+    partial class update_task_model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -277,7 +280,7 @@ namespace LionTaskManagementApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ArtworkKey")
+                    b.Property<string>("ArtworkPath")
                         .HasColumnType("text");
 
                     b.Property<decimal>("Budget")
@@ -355,7 +358,7 @@ namespace LionTaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("WallPicKey")
+                    b.Property<string>("WallPicPath")
                         .HasColumnType("text");
 
                     b.Property<string>("WallType")
