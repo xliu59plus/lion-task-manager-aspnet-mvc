@@ -3,10 +3,14 @@
 
 <h2>Please Complete your profile</h2>
 
+<div class="progress mb-4">
+        <div id="progressBar" class="progress-bar" style="width: 20%;">Step 1 of 7</div>
+    </div>
 <form asp-action="EditProfileTaker" method="post" enctype="multipart/form-data">
-    <!-- Business Information -->
-    <h4>Business and Social Media Links</h4>
-    <hr>
+    <!--step 1: Business Information -->
+    <div id = "step1" class ="form-step">
+    <h4>Business Information</h4>
+     <hr>
       <div class="form-group">
         <label asp-for="CompanyName">Company name:</label>
         <input asp-for="CompanyName" class="form-control" placeholder="Enter your Company Name" />
@@ -19,21 +23,14 @@
         <label>Business Organization Documentation (Upload):</label>
         <input type="file" class="form-control-file" id="BusinessDocumentationUpload" name="BusinessDocumentationUpload"/>
     </div>
-    @* <div class="form-group">
-        <label asp-for="FacebookLink">Facebook:</label>
-        <input asp-for="FacebookLink" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="TikTokLink">TikTok:</label>
-        <input asp-for="TikTokLink" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="InstagramLink">Instagram:</label>
-        <input asp-for="InstagramLink" class="form-control" />
-    </div>
-     <!-- Address -->
+    <button type="button" class="btn btn-primary next-btn">Next</button>
+ </div>
+
+     <!-- step2: Address -->
+ 
+ <div id = "step2" class="form-step d-done">
     <h4>Address Information</h4>
- <h4>Address Information</h4>
+    <hr>
     <div class="form-group">
         <label asp-for="FullAddress">Address:</label> 
         <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address"/> 
@@ -63,9 +60,14 @@
         <label asp-for="ZipCode">Zip Code:</label>
         <input asp-for="ZipCode" class="form-control" id="zipCode" placeholder="Enter Zip Code"/>
     </div>
+    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+     <button type="button" class="btn btn-primary next-btn">Next</button>
+</div>
 
-
+<!-- Step 3: Work Preferences -->
+<div id="step3" class="form-step d-none">
     <h4>Work Preferences</h4>
+    <hr>
     <!-- Wallpen E2 Machine Information -->
     <h5>Wallpen E2 Machine Information</h5>
     <div class="form-group">
@@ -90,10 +92,7 @@
             <input type="radio" id="SupportsCMYKNo" name="SupportsCMYK" value="false" /> No
         </div>
     </div>
-
-     <!-- Artwork Specialization -->
     <h4>Artwork Specialization</h4>
-    <hr>
     <div class="form-group">
         <label asp-for="ArtworkSpecialization">Artwork Specialization:</label>
         <select asp-for="ArtworkSpecialization" class="form-control" id="artworkSpecialization">
@@ -106,9 +105,12 @@
         </select>
         <input asp-for="ArtworkSpecialization" class="form-control mt-2" id="artworkOther" placeholder="Please specify..." style="display: none;" />
     </div>
-
-    <!-- Pricing -->
-    <h5>Pricing Information</h5>
+     <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+     <button type="button" class="btn btn-primary next-btn">Next</button>
+ </div>
+<!-- Step 4: Pricing Information -->
+   <div id="step4" class="form-step d-none">
+    <h4>Pricing Information</h4>
     <div class="form-group">
         <label for="CMYKPrice">CMYK Colors Price (per square footage):</label>
         <input type="number" id="CMYKPrice" name="CMYKPrice" class="form-control" placeholder="Enter price for CMYK colors" />
@@ -121,8 +123,12 @@
         <label for="CMYKWhitePrice">CMYK + White Colors Price (per square footage):</label>
         <input type="number" id="CMYKWhitePrice" name="CMYKWhitePrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
     </div>
+    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+    <button type="button" class="btn btn-primary next-btn">Next</button>
+</div>
 
-    <!-- Travel Preferences -->
+<!-- Step 5: Travel Preferences -->
+<div id="step5" class="form-step d-none">
     <h4>Travel Preferences</h4>
     <hr>
     <div class="form-group">
@@ -148,11 +154,66 @@
                 <option value="OneTime">One Time Fee</option>
             </select>
         </div>
-    </div> *@
+    </div>
+    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+    <button type="button" class="btn btn-primary next-btn">Next</button>
+ </div>
+<!-- Step 6: Social Media Links -->
+        <div id="step6" class="form-step d-none">
+            <h4>Social Media Links</h4>
+            <hr>
+            <div class="form-group">
+                <label asp-for="FacebookLink">Facebook:</label>
+                <input asp-for="FacebookLink" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="TikTokLink">TikTok:</label>
+                <input asp-for="TikTokLink" class="form-control" />
+            </div>
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="button" class="btn btn-primary next-btn">Next</button>
+        </div>
+        <div id="step7" class="form-step d-none">
+    <h4>Review Your Information</h4>
+    <hr>
+    <div class="review-info">
+        <!-- Business Information -->
+        <p><strong>Company Name:</strong> <span id="reviewCompanyName"></span></p>
+        <p><strong>EIN:</strong> <span id="reviewEIN"></span></p>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+        <!-- Address Information -->
+        <p><strong>Full Address:</strong> <span id="reviewFullAddress"></span></p>
+        <p><strong>Address Line 1:</strong> <span id="reviewFirstLine"></span></p>
+        <p><strong>Address Line 2:</strong> <span id="reviewSecondLine"></span></p>
+        <p><strong>City:</strong> <span id="reviewCity"></span></p>
+        <p><strong>State/Province:</strong> <span id="reviewStateProvince"></span></p>
+        <p><strong>Zip Code:</strong> <span id="reviewZipCode"></span></p>
 
-</form>
+        <!-- Work Preferences -->
+        <p><strong>Wallpen Machine Model:</strong> <span id="reviewWallpenMachineModel"></span></p>
+        <p><strong>Wallpen Serial Number:</strong> <span id="reviewWallpenSerialNumber"></span></p>
+        <p><strong>Prints White:</strong> <span id="reviewPrintsWhite"></span></p>
+        <p><strong>Supports CMYK Colors:</strong> <span id="reviewSupportsCMYK"></span></p>
+        <p><strong>Artwork Specialization:</strong> <span id="reviewArtworkSpecialization"></span></p>
+
+        <!-- Pricing Information -->
+        <p><strong>CMYK Colors Price (per square footage):</strong> <span id="reviewCMYKPrice"></span></p>
+        <p><strong>White Color Price (per square footage):</strong> <span id="reviewWhitePrice"></span></p>
+        <p><strong>CMYK + White Colors Price (per square footage):</strong> <span id="reviewCMYKWhitePrice"></span></p>
+
+        <!-- Travel Preferences -->
+        <p><strong>Are you willing to travel over 100 miles?</strong> <span id="reviewTravelOver100"></span></p>
+        <p><strong>Do you charge travel fees over 100 miles?</strong> <span id="reviewChargeTravelFees"></span></p>
+        <p><strong>Travel Fee Amount:</strong> <span id="reviewTravelFeeAmount"></span></p>
+
+        <!-- Social Media Links -->
+        <p><strong>Facebook Link:</strong> <span id="reviewFacebookLink"></span></p>
+        <p><strong>TikTok Link:</strong> <span id="reviewTikTokLink"></span></p>
+    </div>
+    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+    <button type="submit" class="btn btn-success">Submit</button>
+</div>
+        </form>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
 
