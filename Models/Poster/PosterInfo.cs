@@ -11,7 +11,7 @@ namespace LionTaskManagementApp.Models.Poster
         public string LastName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string AddressLine1 { get; set; } = string.Empty;
-        public string AddressLine2 { get; set; } = string.Empty;
+        public string? AddressLine2 { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string StateProvince { get; set; } = string.Empty;
         public string Zipcode { get; set; } = string.Empty;
