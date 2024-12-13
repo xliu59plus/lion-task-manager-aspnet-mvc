@@ -1,71 +1,92 @@
 ﻿@page
 @model RegisterModel
+
 @{
     ViewData["Title"] = "Register";
 }
-
-<div class="container register-page">
-    <div class="row">
-        <!-- 左侧图形区域 -->
-        <div class="col-lg-5 register-left d-flex align-items-center justify-content-center">
-            <img src="~/img/your-image.png" alt="Your Graphic" class="img-fluid" />
-        </div>
-
-        <!-- 右侧表单区域 -->
-        <div class="col-lg-7 register-form">
-            <h3 class="text-center mb-4">Register for an account</h3>
-            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                <!-- Role Selection -->
-                <div class="role-selection mb-5">
-                    <label class="d-block text-center mb-3">Select your type of role</label>
+<div class="d-flex justify-content-center align-items-center vh-100" style="padding-top: 100px;">
+    <div class="col-md-6">
+        <div class="card shadow-sm" style="border-radius: 15px;"> 
+            <div class="card-body">
+                <section>
+                    <form id="register-form" method="post">
+                        <h2 class="text-center mb-3">Register for an account</h2>
+                        <p class="text-center text-muted mb-4">Select your type of role</p>
+                        <hr class="mb-4" />      
+                       
+                <!-- Task Owner Option -->
                     <div class="d-flex justify-content-between">
+                        <!-- Task Owner Option -->
                         <input type="radio" class="btn-check" asp-for="Input.Role" value="Inactive_Poster" id="role-individual" autocomplete="off" />
-                        <label class="btn btn-outline-primary role-card" for="role-individual">
+                        <label class="btn btn-outline-primary role-card text-center p-3" for="role-individual" style="border-radius: 10px;">
                             <div class="role-icon">
-                                <i class="bi bi-person-circle"></i>
+                                <img src="~/img/assets/img/task-regular-24.png" alt="Task Owner Icon" class="role-icon-img" />
                             </div>
-                            <span>Task Owner (Become a user that will post tasks)</span>
+                            <div class="mt-2">Task Owner</div>
+                            <small>(Become a user that will post tasks)</small>
                         </label>
 
+                        <!-- Contractor Option -->
                         <input type="radio" class="btn-check" asp-for="Input.Role" value="Inactive_Taker" id="role-business" autocomplete="off" />
-                        <label class="btn btn-outline-primary role-card" for="role-business">
+                        <label class="btn btn-outline-primary role-card text-center p-3" for="role-business" style="border-radius: 10px;">
                             <div class="role-icon">
-                                <i class="bi bi-briefcase"></i>
+                                <img src="~/img/assets/img/palette-regular-24.png" alt="Contractor Icon" class="role-icon-img" />
                             </div>
-                            <span>Contractor (Become a user that will resolve tasks)</span>
+                            <div class="mt-2">Contractor</div>
+                            <small>(Become a user that will resolve tasks)</small>
                         </label>
                     </div>
-                </div>
 
-                <!-- Form Fields -->
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" placeholder="Enter your email" />
-                    <label asp-for="Input.Email">Email</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Enter your phone number" />
-                    <label asp-for="Input.PhoneNumber">Phone Number</label>
-                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" type="password" placeholder="Enter your password" />
-                    <label asp-for="Input.Password">Password</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.ConfirmPassword" class="form-control" type="password" placeholder="Confirm your password" />
-                    <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-                </div>
+                        <!-- Full Name -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Name" class="form-control" placeholder="Full Name" />
+                            <label asp-for="Input.Name">Full Name</label>
+                            <span asp-validation-for="Input.Name" class="text-danger"></span>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" placeholder="Email" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        
+                        <!-- Phone Number -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone Number" />
+                            <label asp-for="Input.PhoneNumber">Phone Number</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" type="password" class="form-control" placeholder="Password" />
+                            <label asp-for="Input.Password">Password</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        
+                        <!-- Confirm Password -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                            <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 25px;">Register</button>
+                        </div>
 
-                <button id="registerSubmit" type="submit" class="btn btn-primary w-100">Register</button>
-                <p class="text-center mt-3">Already have an account? <a asp-page="./Login">Sign in</a></p>
-            </form>
+                        <!-- Already Registered -->
+                        <div class="text-center mt-4">
+                            <p class="text-muted">Already have an account? <a asp-page="./Login" class="text-decoration-none">Sign In</a></p>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
