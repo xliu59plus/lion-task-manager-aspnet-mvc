@@ -60,8 +60,11 @@
         <label asp-for="ZipCode">Zip Code:</label>
         <input asp-for="ZipCode" class="form-control" id="zipCode" placeholder="Enter Zip Code"/>
     </div>
+    <div class="mt-5 d-flex justify-content-between px-4 py-2">
     <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-     <button type="button" class="btn btn-primary next-btn">Next</button>
+    <button type="button" class="btn btn-primary next-btn">Next</button>
+</div>
+
 </div>
 
 <!-- Step 3: Work Preferences -->
@@ -105,8 +108,11 @@
         </select>
         <input asp-for="ArtworkSpecialization" class="form-control mt-2" id="artworkOther" placeholder="Please specify..." style="display: none;" />
     </div>
-     <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-     <button type="button" class="btn btn-primary next-btn">Next</button>
+     <div class="mt-5 d-flex justify-content-between px-4 py-2">
+    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+    <button type="button" class="btn btn-primary next-btn">Next</button>
+</div>
+
  </div>
 <!-- Step 4: Pricing Information -->
    <div id="step4" class="form-step d-none">
@@ -123,40 +129,48 @@
         <label for="CMYKWhitePrice">CMYK + White Colors Price (per square footage):</label>
         <input type="number" id="CMYKWhitePrice" name="CMYKWhitePrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
     </div>
+    <div class="mt-5 d-flex justify-content-between px-4 py-2">
     <button type="button" class="btn btn-secondary prev-btn">Previous</button>
     <button type="button" class="btn btn-primary next-btn">Next</button>
+</div>
+
 </div>
 
 <!-- Step 5: Travel Preferences -->
 <div id="step5" class="form-step d-none">
     <h4>Travel Preferences</h4>
-    <hr>
+<hr>
+<div class="form-group">
+    <label>Are you willing to travel over 100 miles from your Zip Code?</label>
+    <div>
+        <input type="radio" id="travelOver100Yes" name="travelOver100" value="Yes" /> Yes
+        <input type="radio" id="travelOver100No" name="travelOver100" value="No" /> No
+    </div>
+</div>
+<div class="form-group">
+    <label>Do you charge travel fees over 100 miles from your location?</label>
+    <div>
+        <input type="radio" id="travelFeeYes" name="TravelFees" value="Yes" /> Yes
+        <input type="radio" id="travelFeeNo" name="TravelFees" value="No" /> No
+    </div>
+</div>
+<div class="form-group" id="travelFeeDetails" style="display: none;">
+    <label>What is your fee traveling over 100 miles?</label>
     <div class="form-group">
-        <label>Are you willing to travel over 100 miles from your Zip Code?</label>
-        <div>
-            <input type="radio" id="travelOver100Yes" name="travelOver100" value="Yes" /> Yes
-            <input type="radio" id="travelOver100No" name="travelOver100" value="No" /> No
-        </div>
+        <input type="number" id="travelFeeAmount" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
+        <select id="feeType" class="form-control mt-2">
+            <option value="PerSquareFoot">Per Square Footage</option>
+            <option value="OneTime">One Time Fee</option>
+        </select>
     </div>
-    <div class="form-group">
-        <label>Do you charge travel fees over 100 miles from your location?</label>
-        <div>
-            <input type="radio" id="chargeTravelFeesYes" name="chargeTravelFees" value="Yes" /> Yes
-            <input type="radio" id="chargeTravelFeesNo" name="chargeTravelFees" value="No" /> No
-        </div>
-    </div>
-    <div class="form-group" id="travelFeeDetails" style="display: none;">
-        <label>What is your fee traveling over 100 miles?</label>
-        <div class="form-group">
-            <input type="number" id="travelFeeAmount" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
-            <select id="feeType" class="form-control mt-2">
-                <option value="PerSquareFoot">Per Square Footage</option>
-                <option value="OneTime">One Time Fee</option>
-            </select>
-        </div>
-    </div>
+</div>
+  <div class="mt-5 d-flex justify-content-between px-4 py-2">
     <button type="button" class="btn btn-secondary prev-btn">Previous</button>
     <button type="button" class="btn btn-primary next-btn">Next</button>
+</div>
+    </div>
+
+
  </div>
 <!-- Step 6: Social Media Links -->
         <div id="step6" class="form-step d-none">
@@ -170,9 +184,11 @@
                 <label asp-for="TikTokLink">TikTok:</label>
                 <input asp-for="TikTokLink" class="form-control" />
             </div>
-            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-            <button type="button" class="btn btn-primary next-btn">Next</button>
-        </div>
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+        <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+        <button type="button" class="btn btn-primary next-btn">Next</button>
+    </div>
+</div>
         <div id="step7" class="form-step d-none">
     <h4>Review Your Information</h4>
     <hr>
@@ -210,8 +226,11 @@
         <p><strong>Facebook Link:</strong> <span id="reviewFacebookLink"></span></p>
         <p><strong>TikTok Link:</strong> <span id="reviewTikTokLink"></span></p>
     </div>
+<div class="mt-5 d-flex justify-content-between px-4 py-2">
     <button type="button" class="btn btn-secondary prev-btn">Previous</button>
     <button type="submit" class="btn btn-success">Submit</button>
+</div>
+
 </div>
         </form>
 

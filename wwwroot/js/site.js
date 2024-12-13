@@ -5,52 +5,12 @@
  */
 
 // Scripts
-window.addEventListener("DOMContentLoaded", (event) => {
-  // Navbar shrink function
-  var navbarShrink = function () {
-    const navbarCollapsible = document.body.querySelector("#mainNav");
-    if (!navbarCollapsible) {
-      return;
-    }
-    if (window.scrollY === 0) {
-      navbarCollapsible.classList.remove("navbar-shrink");
-    } else {
-      navbarCollapsible.classList.add("navbar-shrink");
-    }
-  };
-
-  // Shrink the navbar
-  navbarShrink();
-
-  // Shrink the navbar when page is scrolled
-  document.addEventListener("scroll", navbarShrink);
-
-  // Activate Bootstrap scrollspy on the main nav element
-  const mainNav = document.body.querySelector("#mainNav");
-  if (mainNav) {
-    new bootstrap.ScrollSpy(document.body, {
-      target: "#mainNav",
-      rootMargin: "0px 0px -40%",
-    });
-  }
-
-  // Collapse responsive navbar when toggler is visible
-  const navbarToggler = document.body.querySelector(".navbar-toggler");
-  const responsiveNavItems = [].slice.call(
-    document.querySelectorAll("#navbarResponsive .nav-link")
-  );
-  responsiveNavItems.map(function (responsiveNavItem) {
-    responsiveNavItem.addEventListener("click", () => {
-      if (window.getComputedStyle(navbarToggler).display !== "none") {
-        navbarToggler.click();
-      }
-    });
-  });
-
-  // Custom JavaScript logic (your script starts here)
+window.addEventListener("DOMContentLoaded", () => {
+  // 获取所有步骤元素和进度条
+  window.currentStep = 0;
   const steps = document.querySelectorAll(".form-step");
   const progressBar = document.getElementById("progressBar");
-  let currentStep = 0;
+  // 字段映射，用于填充 Review 页
   const fieldMapping = {
     CompanyName: "reviewCompanyName",
     EIN: "reviewEIN",
@@ -69,6 +29,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     TikTokLink: "reviewTikTokLink",
   };
 
+  // 显示当前步骤
   function showStep(index) {
     steps.forEach((step, i) => {
       step.classList.toggle("d-none", i !== index);
@@ -78,6 +39,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     progressBar.textContent = `Step ${index + 1} of ${stepCount}`;
   }
 
+  // 填充 Review 页的数据
   function populateReview() {
     Object.entries(fieldMapping).forEach(([formFieldId, reviewFieldId]) => {
       const formField = document.getElementById(formFieldId);
@@ -87,7 +49,14 @@ window.addEventListener("DOMContentLoaded", (event) => {
         reviewField.textContent = formField.value || "N/A";
       }
     });
-
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   // 初始化 ScrollSpy
+    //   new bootstrap.ScrollSpy(document.body, {
+    //     target: "#mainNav", // 确保这个 ID 与导航栏的 ID 匹配
+    //     offset: 100, // 偏移量，可以根据导航栏高度调整
+    //   });
+    // });
+    // 填充单选按钮的值
     document.getElementById("reviewPrintsWhite").textContent =
       document.querySelector('input[name="PrintsWhite"]:checked')?.value ||
       "N/A";
@@ -101,25 +70,43 @@ window.addEventListener("DOMContentLoaded", (event) => {
       document.querySelector('input[name="chargeTravelFees"]:checked')?.value ||
       "N/A";
 
-    const artworkSpecialization = document.getElementById(
-      "artworkSpecialization"
-    )?.value;
-    const artworkOtherInput =
-      document.getElementById("artworkOther")?.value || "N/A";
-    document.getElementById("reviewArtworkSpecialization").textContent =
-      artworkSpecialization === "Other"
-        ? artworkOtherInput
-        : artworkSpecialization || "N/A";
+    // Artwork Specialization
+    // const artworkSpecialization = document.getElementById(
+    //   "artworkSpecialization"
+    // )?.value;
+    // const artworkOtherInput =
+    //   document.getElementById("artworkOther")?.value || "N/A";
+    // document.getElementById("reviewArtworkSpecialization").textContent =
+    //   artworkSpecialization === "Other"
+    //     ? artworkOtherInput
+    //     : artworkSpecialization || "N/A";
 
+    // Travel Fee Amount
     document.getElementById("reviewTravelFeeAmount").textContent =
       document.getElementById("travelFeeAmount")?.value || "N/A";
   }
+  const artworkSpecialization = document.getElementById(
+    "artworkSpecialization"
+  );
+  const artworkOther = document.getElementById("artworkOther");
 
+  if (artworkSpecialization) {
+    artworkSpecialization.addEventListener("change", (event) => {
+      if (event.target.value === "Other") {
+        artworkOther.style.display = "block"; // 显示输入框
+      } else {
+        artworkOtherInput.style.display = "none"; // 隐藏输入框
+        artworkOtherInput.value = ""; // 清空输入框值
+      }
+    });
+  }
+
+  // 绑定 Next 按钮
   document.querySelectorAll(".next-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (currentStep < steps.length - 1) {
         if (currentStep === steps.length - 2) {
-          populateReview();
+          populateReview(); // 调用填充数据的函数
         }
         currentStep++;
         showStep(currentStep);
@@ -127,6 +114,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     });
   });
 
+  // 绑定 Previous 按钮
   document.querySelectorAll(".prev-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (currentStep > 0) {
@@ -136,10 +124,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
     });
   });
 
-  showStep(currentStep);
-
-  const artworkSpecializationSelect = document.querySelector(
-    '[name="ArtworkSpecialization"]'
+  // 特殊字段逻辑
+  const artworkSpecializationSelect = document.getElementById(
+    "artworkSpecialization"
   );
   const artworkOtherInput = document.getElementById("artworkOther");
   const travelFeeYes = document.getElementById("travelFeeYes");
@@ -165,4 +152,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
       }
     });
   }
+
+  // 初始化显示第一步
+  showStep(currentStep);
 });

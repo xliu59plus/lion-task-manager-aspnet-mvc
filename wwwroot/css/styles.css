@@ -11579,9 +11579,10 @@ body {
   padding: 5rem 0;
 }
 
-/* Adjust spacing for the form title */
+/* register and login style */
 .register-form h3 {
   margin-top: 3rem; /* 增加顶部间距 */
   margin-bottom: 2rem; /* 保持与下面内容的间距 */
   text-align: center; /* 确保标题居中 */
 }
+/* CSS */
