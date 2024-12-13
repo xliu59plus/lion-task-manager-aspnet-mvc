@@ -19,7 +19,7 @@ public class ContractorInfoViewModel
     [Required]
     public string FirstLine { get; set; } = string.Empty;
     
-    public string SecondLine { get; set; } = string.Empty;
+    public string? SecondLine { get; set; } = string.Empty;
     
     [Required]
     public string StateProvince { get; set; } = string.Empty;
@@ -29,9 +29,6 @@ public class ContractorInfoViewModel
 
     [Required]
     public string ZipCode { get; set; } = string.Empty;
-
-    [Required]
-    public string LatAndLongitude { get; set; } = string.Empty;
 
     [Required]
     public decimal MaxTravelDistanceMiles { get; set; }
@@ -69,4 +66,10 @@ public class ContractorInfoViewModel
     public decimal? WhiteColorPrice { get; internal set; }
     [Required]
     public decimal? CMYKWhiteColorPrice { get; internal set; }
+
+    [Required]
+    public string Latitude { get; set; } = string.Empty;
+    [Required]
+    public string Longitude { get; set; } = string.Empty;
+
 }

@@ -135,7 +135,6 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
         contractorInfo.SecondLine = model.SecondLine;
         contractorInfo.City = model.City;
         contractorInfo.StateProvince = model.StateProvince;
-        contractorInfo.LatAndLongitude = model.LatAndLongitude;
         contractorInfo.CompanyName = model.CompanyName;
         contractorInfo.EIN = model.EIN;
         contractorInfo.FacebookLink = model.FacebookLink;
@@ -150,6 +149,8 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
         contractorInfo.WallpenSerialNumber = model.WallpenSerialNumber;
         contractorInfo.ChargeTravelFeesOverLimit = model.ChargeTravelFeesOverLimit;
         contractorInfo.TravelFeeOverLimit = model.TravelFeeOverLimit;
+        contractorInfo.Longitude = model.Longitude;
+        contractorInfo.Latitude = model.Latitude;
 
         // Pricing field
         contractorInfo.CMYKPrice = model.CMYKPrice;

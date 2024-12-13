@@ -48,11 +48,15 @@ namespace LionTaskManagementApp.Areas.Identity.Data
         // Address Information
         public string FullAddress { get; set; } = string.Empty;
         public string FirstLine { get; set; } = string.Empty;
-        public string SecondLine { get; set; } = string.Empty;
+        public string? SecondLine { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string StateProvince { get; set; } = string.Empty;
         public string ZipCode { get; set; } = string.Empty;
         public string LatAndLongitude { get; set; } = string.Empty; // Latitude and Longitude
+
+        public string Longitude { get; set; } = string.Empty;
+
+        public string Latitude { get; set; } = string.Empty;
 
         // Profile Status
         public DateTimeOffset ProfileSubmitTime { get; set; } = DateTimeOffset.MinValue; // Time profile submitted

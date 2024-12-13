@@ -4,256 +4,228 @@
 <h2>Please Complete your profile</h2>
 
 <div class="progress mb-4">
-        <div id="progressBar" class="progress-bar" style="width: 20%;">Step 1 of 7</div>
-    </div>
+    <div id="progressBar" class="progress-bar" style="width: 20%;">Step 1 of 7</div>
+</div>
+
 <form asp-action="EditProfileTaker" method="post" enctype="multipart/form-data">
-    <!--step 1: Business Information -->
-    <div id = "step1" class ="form-step">
-    <h4>Business Information</h4>
-     <hr>
-      <div class="form-group">
-        <label asp-for="CompanyName">Company name:</label>
-        <input asp-for="CompanyName" class="form-control" placeholder="Enter your Company Name" />
-    </div>
-    <div class="form-group">
-        <label asp-for="EIN">EIN:</label>
-        <input asp-for="EIN" class="form-control" placeholder="Enter your EIN" />
-    </div>
-    <div class="form-group">
-        <label>Business Organization Documentation (Upload):</label>
-        <input type="file" class="form-control-file" id="BusinessDocumentationUpload" name="BusinessDocumentationUpload"/>
-    </div>
-    <button type="button" class="btn btn-primary next-btn">Next</button>
- </div>
-
-     <!-- step2: Address -->
- 
- <div id = "step2" class="form-step d-done">
-    <h4>Address Information</h4>
-    <hr>
-    <div class="form-group">
-        <label asp-for="FullAddress">Address:</label> 
-        <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address"/> 
-    </div>
-
-    <div class="form-group">
-        <label asp-for="FirstLine">Address Line 1:</label>
-        <input asp-for="FirstLine" class="form-control" id="firstLine" placeholder="Enter Address Line 1"/>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="SecondLine">Address Line 2:</label>
-        <input asp-for="SecondLine" class="form-control" id="secondLine" placeholder="Enter Address Line 2"/>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="StateProvince">State/Province:</label>
-        <input asp-for="StateProvince" class="form-control" id="stateProvince" placeholder="Enter State/Province"/>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="City">City:</label>
-        <input asp-for="City" class="form-control" id="city" placeholder="Enter City"/>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="ZipCode">Zip Code:</label>
-        <input asp-for="ZipCode" class="form-control" id="zipCode" placeholder="Enter Zip Code"/>
-    </div>
-    <div class="mt-5 d-flex justify-content-between px-4 py-2">
-    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-    <button type="button" class="btn btn-primary next-btn">Next</button>
-</div>
-
-</div>
-
-<!-- Step 3: Work Preferences -->
-<div id="step3" class="form-step d-none">
-    <h4>Work Preferences</h4>
-    <hr>
-    <!-- Wallpen E2 Machine Information -->
-    <h5>Wallpen E2 Machine Information</h5>
-    <div class="form-group">
-        <label for="WallpenModel">Wallpen Machine Model:</label>
-        <input type="text" id="WallpenMachineModel" name="WallpenMachineModel" class="form-control" placeholder="Enter Wallpen Machine Model (e.g., E2)" required />
-    </div>
-    <div class="form-group">
-        <label for="WallpenSerialNumber">Wallpen E2 Machine Series Number:</label>
-        <input type="text" id="WallpenSerialNumber" name="WallpenSerialNumber" class="form-control" placeholder="Enter Serial Number" required />
-    </div>
-    <div class="form-group">
-        <label>Does your machine print white color?</label>
-        <div>
-            <input type="radio" id="PrintsWhiteYes" name="PrintsWhite" value="true" /> Yes
-            <input type="radio" id="PrintsWhiteNo" name="PrintsWhite" value="false" /> No
+    <div id="step1" class="form-step">
+        <h4>Business Information</h4>
+        <hr>
+        <div class="form-group">
+            <label asp-for="CompanyName">Company name:</label>
+            <input asp-for="CompanyName" class="form-control" placeholder="Enter your Company Name" />
         </div>
-    </div>
-    <div class="form-group">
-        <label>Supports CMYK Colors?</label>
-        <div>
-            <input type="radio" id="SupportsCMYKYes" name="SupportsCMYK" value="true" /> Yes
-            <input type="radio" id="SupportsCMYKNo" name="SupportsCMYK" value="false" /> No
+        <div class="form-group">
+            <label asp-for="EIN">EIN:</label>
+            <input asp-for="EIN" class="form-control" placeholder="Enter your EIN" />
         </div>
-    </div>
-    <h4>Artwork Specialization</h4>
-    <div class="form-group">
-        <label asp-for="ArtworkSpecialization">Artwork Specialization:</label>
-        <select asp-for="ArtworkSpecialization" class="form-control" id="artworkSpecialization">
-            <option value="">Select Specialization</option>
-            <option value="Abstract">Abstract</option>
-            <option value="Portrait">Portrait</option>
-            <option value="Landscape">Landscape</option>
-            <option value="Modern">Modern</option>
-            <option value="Other">Other</option>
-        </select>
-        <input asp-for="ArtworkSpecialization" class="form-control mt-2" id="artworkOther" placeholder="Please specify..." style="display: none;" />
-    </div>
-     <div class="mt-5 d-flex justify-content-between px-4 py-2">
-    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-    <button type="button" class="btn btn-primary next-btn">Next</button>
-</div>
-
- </div>
-<!-- Step 4: Pricing Information -->
-   <div id="step4" class="form-step d-none">
-    <h4>Pricing Information</h4>
-    <div class="form-group">
-        <label for="CMYKPrice">CMYK Colors Price (per square footage):</label>
-        <input type="number" id="CMYKPrice" name="CMYKPrice" class="form-control" placeholder="Enter price for CMYK colors" />
-    </div>
-    <div class="form-group">
-        <label for="WhitePrice">White Color Price (per square footage):</label>
-        <input type="number" id="WhitePrice" name="WhitePrice" class="form-control" placeholder="Enter price for white color" />
-    </div>
-    <div class="form-group">
-        <label for="CMYKWhitePrice">CMYK + White Colors Price (per square footage):</label>
-        <input type="number" id="CMYKWhitePrice" name="CMYKWhitePrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
-    </div>
-    <div class="mt-5 d-flex justify-content-between px-4 py-2">
-    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-    <button type="button" class="btn btn-primary next-btn">Next</button>
-</div>
-
-</div>
-
-<!-- Step 5: Travel Preferences -->
-<div id="step5" class="form-step d-none">
-    <h4>Travel Preferences</h4>
-<hr>
-<div class="form-group">
-    <label>Are you willing to travel over 100 miles from your Zip Code?</label>
-    <div>
-        <input type="radio" id="travelOver100Yes" name="travelOver100" value="Yes" /> Yes
-        <input type="radio" id="travelOver100No" name="travelOver100" value="No" /> No
-    </div>
-</div>
-<div class="form-group">
-    <label>Do you charge travel fees over 100 miles from your location?</label>
-    <div>
-        <input type="radio" id="travelFeeYes" name="TravelFees" value="Yes" /> Yes
-        <input type="radio" id="travelFeeNo" name="TravelFees" value="No" /> No
-    </div>
-</div>
-<div class="form-group" id="travelFeeDetails" style="display: none;">
-    <label>What is your fee traveling over 100 miles?</label>
-    <div class="form-group">
-        <input type="number" id="travelFeeAmount" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
-        <select id="feeType" class="form-control mt-2">
-            <option value="PerSquareFoot">Per Square Footage</option>
-            <option value="OneTime">One Time Fee</option>
-        </select>
-    </div>
-</div>
-  <div class="mt-5 d-flex justify-content-between px-4 py-2">
-    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-    <button type="button" class="btn btn-primary next-btn">Next</button>
-</div>
-    </div>
-
-
- </div>
-<!-- Step 6: Social Media Links -->
-        <div id="step6" class="form-step d-none">
-            <h4>Social Media Links</h4>
-            <hr>
-            <div class="form-group">
-                <label asp-for="FacebookLink">Facebook:</label>
-                <input asp-for="FacebookLink" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="TikTokLink">TikTok:</label>
-                <input asp-for="TikTokLink" class="form-control" />
-            </div>
-        <div class="mt-5 d-flex justify-content-between px-4 py-2">
-        <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+        <div class="form-group">
+            <label>Business Organization Documentation (Upload):</label>
+            <input type="file" class="form-control-file" id="BusinessDocumentationUpload" name="BusinessDocumentationUpload" />
+        </div>
         <button type="button" class="btn btn-primary next-btn">Next</button>
     </div>
-</div>
-        <div id="step7" class="form-step d-none">
-    <h4>Review Your Information</h4>
-    <hr>
-    <div class="review-info">
-        <!-- Business Information -->
-        <p><strong>Company Name:</strong> <span id="reviewCompanyName"></span></p>
-        <p><strong>EIN:</strong> <span id="reviewEIN"></span></p>
 
-        <!-- Address Information -->
-        <p><strong>Full Address:</strong> <span id="reviewFullAddress"></span></p>
-        <p><strong>Address Line 1:</strong> <span id="reviewFirstLine"></span></p>
-        <p><strong>Address Line 2:</strong> <span id="reviewSecondLine"></span></p>
-        <p><strong>City:</strong> <span id="reviewCity"></span></p>
-        <p><strong>State/Province:</strong> <span id="reviewStateProvince"></span></p>
-        <p><strong>Zip Code:</strong> <span id="reviewZipCode"></span></p>
+    <div id="step2" class="form-step d-done">
+        <h4>Address Information</h4>
+        <hr>
+        <div class="form-group">
+            <label asp-for="FullAddress">Address:</label>
+            <input asp-for="FullAddress" class="form-control" id="addressInput" placeholder="Enter an address" />
+        </div>
 
-        <!-- Work Preferences -->
-        <p><strong>Wallpen Machine Model:</strong> <span id="reviewWallpenMachineModel"></span></p>
-        <p><strong>Wallpen Serial Number:</strong> <span id="reviewWallpenSerialNumber"></span></p>
-        <p><strong>Prints White:</strong> <span id="reviewPrintsWhite"></span></p>
-        <p><strong>Supports CMYK Colors:</strong> <span id="reviewSupportsCMYK"></span></p>
-        <p><strong>Artwork Specialization:</strong> <span id="reviewArtworkSpecialization"></span></p>
+        <div class="form-group">
+            <label asp-for="FirstLine">Address Line 1:</label>
+            <input asp-for="FirstLine" class="form-control" id="firstLine" placeholder="Enter Address Line 1" />
+        </div>
 
-        <!-- Pricing Information -->
-        <p><strong>CMYK Colors Price (per square footage):</strong> <span id="reviewCMYKPrice"></span></p>
-        <p><strong>White Color Price (per square footage):</strong> <span id="reviewWhitePrice"></span></p>
-        <p><strong>CMYK + White Colors Price (per square footage):</strong> <span id="reviewCMYKWhitePrice"></span></p>
+        <div class="form-group">
+            <label asp-for="SecondLine">Address Line 2:</label>
+            <input asp-for="SecondLine" class="form-control" id="secondLine" placeholder="Enter Address Line 2" />
+        </div>
 
-        <!-- Travel Preferences -->
-        <p><strong>Are you willing to travel over 100 miles?</strong> <span id="reviewTravelOver100"></span></p>
-        <p><strong>Do you charge travel fees over 100 miles?</strong> <span id="reviewChargeTravelFees"></span></p>
-        <p><strong>Travel Fee Amount:</strong> <span id="reviewTravelFeeAmount"></span></p>
+        <div class="form-group">
+            <label asp-for="StateProvince">State/Province:</label>
+            <input asp-for="StateProvince" class="form-control" id="stateProvince" placeholder="Enter State/Province" />
+        </div>
 
-        <!-- Social Media Links -->
-        <p><strong>Facebook Link:</strong> <span id="reviewFacebookLink"></span></p>
-        <p><strong>TikTok Link:</strong> <span id="reviewTikTokLink"></span></p>
+        <div class="form-group">
+            <label asp-for="City">City:</label>
+            <input asp-for="City" class="form-control" id="city" placeholder="Enter City" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ZipCode">Zip Code:</label>
+            <input asp-for="ZipCode" class="form-control" id="zipCode" placeholder="Enter Zip Code" />
+        </div>
+        <input type="hidden" id="latitude" name="latitude" readonly />
+        <input type="hidden" id="longitude" name="longitude" readonly />
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="button" class="btn btn-primary next-btn">Next</button>
+        </div>
     </div>
-<div class="mt-5 d-flex justify-content-between px-4 py-2">
-    <button type="button" class="btn btn-secondary prev-btn">Previous</button>
-    <button type="submit" class="btn btn-success">Submit</button>
-</div>
 
-</div>
-        </form>
+    <div id="step3" class="form-step d-none">
+        <h4>Work Preferences</h4>
+        <hr>
+        <h5>Wallpen E2 Machine Information</h5>
+        <div class="form-group">
+            <label for="WallpenModel">Wallpen Machine Model:</label>
+            <input type="text" id="WallpenMachineModel" name="WallpenMachineModel" class="form-control" placeholder="Enter Wallpen Machine Model (e.g., E2)" required />
+        </div>
+        <div class="form-group">
+            <label for="WallpenSerialNumber">Wallpen E2 Machine Series Number:</label>
+            <input type="text" id="WallpenSerialNumber" name="WallpenSerialNumber" class="form-control" placeholder="Enter Serial Number" required />
+        </div>
+        <div class="form-group">
+            <label>Does your machine print white color?</label>
+            <div>
+                <input type="radio" id="PrintsWhiteYes" name="PrintsWhite" value="true" /> Yes
+                <input type="radio" id="PrintsWhiteNo" name="PrintsWhite" value="false" /> No
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Supports CMYK Colors?</label>
+            <div>
+                <input type="radio" id="SupportsCMYKYes" name="SupportsCMYK" value="true" /> Yes
+                <input type="radio" id="SupportsCMYKNo" name="SupportsCMYK" value="false" /> No
+            </div>
+        </div>
+        <h4>Artwork Specialization</h4>
+        <div class="form-group">
+            <label asp-for="ArtworkSpecialization">Artwork Specialization:</label>
+            <select asp-for="ArtworkSpecialization" class="form-control" id="artworkSpecialization">
+                <option value="">Select Specialization</option>
+                <option value="Abstract">Abstract</option>
+                <option value="Portrait">Portrait</option>
+                <option value="Landscape">Landscape</option>
+                <option value="Modern">Modern</option>
+                <option value="Other">Other</option>
+            </select>
+            <input asp-for="ArtworkSpecialization" class="form-control mt-2" id="artworkOther" placeholder="Please specify..." style="display: none;" />
+        </div>
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="button" class="btn btn-primary next-btn">Next</button>
+        </div>
+    </div>
+    <div id="step4" class="form-step d-none">
+        <h4>Pricing Information</h4>
+        <div class="form-group">
+            <label for="CMYKPrice">CMYK Colors Price (per square footage):</label>
+            <input type="number" id="CMYKPrice" name="CMYKPrice" class="form-control" placeholder="Enter price for CMYK colors" />
+        </div>
+        <div class="form-group">
+            <label for="WhitePrice">White Color Price (per square footage):</label>
+            <input type="number" id="WhitePrice" name="WhitePrice" class="form-control" placeholder="Enter price for white color" />
+        </div>
+        <div class="form-group">
+            <label for="CMYKWhitePrice">CMYK + White Colors Price (per square footage):</label>
+            <input type="number" id="CMYKWhitePrice" name="CMYKWhitePrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
+        </div>
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="button" class="btn btn-primary next-btn">Next</button>
+        </div>
+    </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places"></script>
+    <div id="step5" class="form-step d-none">
+        <h4>Travel Preferences</h4>
+        <hr>
+        <div class="form-group">
+            <label>Are you willing to travel over 100 miles from your Zip Code?</label>
+            <div>
+                <input type="radio" id="travelOver100Yes" name="travelOver100" value="Yes" /> Yes
+                <input type="radio" id="travelOver100No" name="travelOver100" value="No" /> No
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Do you charge travel fees over 100 miles from your location?</label>
+            <div>
+                <input type="radio" id="travelFeeYes" name="TravelFees" value="Yes" /> Yes
+                <input type="radio" id="travelFeeNo" name="TravelFees" value="No" /> No
+            </div>
+        </div>
+        <div class="form-group" id="travelFeeDetails" style="display: none;">
+            <label>What is your fee traveling over 100 miles?</label>
+            <div class="form-group">
+                <input type="number" id="travelFeeAmount" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
+                <select id="feeType" class="form-control mt-2">
+                    <option value="PerSquareFoot">Per Square Footage</option>
+                    <option value="OneTime">One Time Fee</option>
+                </select>
+            </div>
+        </div>
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="button" class="btn btn-primary next-btn">Next</button>
+        </div>
+    </div>
 
-<div id="map" style="height: 400px; width: 100%;"></div>
 
+    <div id="step6" class="form-step d-none">
+        <h4>Social Media Links</h4>
+        <hr>
+        <div class="form-group">
+            <label asp-for="FacebookLink">Facebook:</label>
+            <input asp-for="FacebookLink" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="TikTokLink">TikTok:</label>
+            <input asp-for="TikTokLink" class="form-control" />
+        </div>
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="button" class="btn btn-primary next-btn">Next</button>
+        </div>
+    </div>
 
-@* <script>
-    let map;
-    let marker;
-    function initMap() {
-        // Initialize the map (you might want to center it based on user's location or a default)
-        var map = new google.maps.Map(document.getElementById('map'), {
-            center: { lat: -34.397, lng: 150.644 }, // Default location
-            zoom: 8
-        });
+    <div id="step7" class="form-step d-none">
+        <h4>Review Your Information</h4>
+        <hr>
+        <div class="review-info">
+            <p><strong>Company Name:</strong> <span id="reviewCompanyName"></span></p>
+            <p><strong>EIN:</strong> <span id="reviewEIN"></span></p>
 
-        // Autocomplete for the address input
+            <p><strong>Full Address:</strong> <span id="reviewFullAddress"></span></p>
+            <p><strong>Address Line 1:</strong> <span id="reviewFirstLine"></span></p>
+            <p><strong>Address Line 2:</strong> <span id="reviewSecondLine"></span></p>
+            <p><strong>City:</strong> <span id="reviewCity"></span></p>
+            <p><strong>State/Province:</strong> <span id="reviewStateProvince"></span></p>
+            <p><strong>Zip Code:</strong> <span id="reviewZipCode"></span></p>
+
+            <p><strong>Wallpen Machine Model:</strong> <span id="reviewWallpenMachineModel"></span></p>
+            <p><strong>Wallpen Serial Number:</strong> <span id="reviewWallpenSerialNumber"></span></p>
+            <p><strong>Prints White:</strong> <span id="reviewPrintsWhite"></span></p>
+            <p><strong>Supports CMYK Colors:</strong> <span id="reviewSupportsCMYK"></span></p>
+            <p><strong>Artwork Specialization:</strong> <span id="reviewArtworkSpecialization"></span></p>
+
+            <p><strong>CMYK Colors Price (per square footage):</strong> <span id="reviewCMYKPrice"></span></p>
+            <p><strong>White Color Price (per square footage):</strong> <span id="reviewWhitePrice"></span></p>
+            <p><strong>CMYK + White Colors Price (per square footage):</strong> <span id="reviewCMYKWhitePrice"></span></p>
+
+            <p><strong>Are you willing to travel over 100 miles?</strong> <span id="reviewTravelOver100"></span></p>
+            <p><strong>Do you charge travel fees over 100 miles?</strong> <span id="reviewChargeTravelFees"></span></p>
+            <p><strong>Travel Fee Amount:</strong> <span id="reviewTravelFeeAmount"></span></p>
+
+            <p><strong>Facebook Link:</strong> <span id="reviewFacebookLink"></span></p>
+            <p><strong>TikTok Link:</strong> <span id="reviewTikTokLink"></span></p>
+        </div>
+        <div class="mt-5 d-flex justify-content-between px-4 py-2">
+            <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function initAutoComplete() {
+        // Initialize the autocomplete input
         var input = document.getElementById('addressInput');
         var autocomplete = new google.maps.places.Autocomplete(input);
 
-        autocomplete.addListener('place_changed', function() {
+        autocomplete.addListener('place_changed', function () {
             var place = autocomplete.getPlace();
             if (!place.geometry) {
                 console.log("Autocomplete's returned place contains no geometry");
@@ -263,7 +235,9 @@
             // Get latitude and longitude
             var lat = place.geometry.location.lat();
             var lng = place.geometry.location.lng();
-            document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
+            // You'll need hidden fields for latitude and longitude
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
 
             // Populate address components
             var addressComponents = place.address_components;
@@ -280,7 +254,7 @@
                     case 'locality':
                         document.getElementById('city').value = component.long_name;
                         break;
-                    case 'administrative_area_level_1':  
+                    case 'administrative_area_level_1':
                         document.getElementById('stateProvince').value = component.short_name;
                         break;
                     case 'postal_code':
@@ -288,29 +262,7 @@
                         break;
                 }
             }
-
-            map.setCenter(place.geometry.location);
-            map.setZoom(15);
-
-            if (marker) {
-                marker.setPosition(place.geometry.location);
-            } else {
-                // Create a new marker
-                marker = new google.maps.Marker({
-                    position: place.geometry.location,
-                    map: map
-                });
-            }
         });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('form').addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                }
-            });
-        });
-
-    window.onload = initMap; 
-</script> *@
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places&callback=initAutoComplete" async defer></script> 
