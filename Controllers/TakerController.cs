@@ -7,6 +7,7 @@ using LionTaskManagementApp.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using NuGet.Packaging.Signing;
 using Stripe;
+using LionTaskManagementApp.Services;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -15,12 +16,14 @@ namespace LionTaskManagementApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<TaskUser> _userManager;
         private readonly SignInManager<TaskUser> _signInManager;
+        private readonly S3Service _s3Service;
 
-        public TakerController(ApplicationDbContext context, UserManager<TaskUser> userManager, SignInManager<TaskUser> signInManager)
+        public TakerController(ApplicationDbContext context, UserManager<TaskUser> userManager, SignInManager<TaskUser> signInManager, S3Service s3Service)
         {
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
+            _s3Service = s3Service;
         }
 
         [Authorize(Roles="Taker, Inactive_Taker, Admin")]    
@@ -87,7 +90,7 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
         }
         // Handle file upload for BusinessDocumentation
        // Handle file upload for BusinessDocumentation
-        if (BusinessDocumentationUpload != null)
+        if (BusinessDocumentationUpload != null && BusinessDocumentationUpload.Length > 0)
         {
             // Validate file type (only PDF or images allowed)
             if (!BusinessDocumentationUpload.ContentType.StartsWith("application/pdf") &&
@@ -105,25 +108,25 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
             }
 
             // If validation passes, proceed with file upload
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-            if (!Directory.Exists(uploadsFolder))
+            // 1. Create a temporary file
+            string tempFilePath = Path.GetTempFileName();
+
+            // 2. Save the uploaded file to the temporary location
+            using (var stream = new FileStream(tempFilePath, FileMode.Create))
             {
-                Directory.CreateDirectory(uploadsFolder); // Create the folder if it doesn't exist
+                BusinessDocumentationUpload.CopyToAsync(stream);
             }
 
-            // Generate a unique file name
-            var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(BusinessDocumentationUpload.FileName);
-            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-            Console.WriteLine("storing to file path: " + filePath);
+            // 3. Upload to S3 from the temporary file
+            string key = $"artworks/{Guid.NewGuid()}_{BusinessDocumentationUpload.FileName}";
+            await _s3Service.UploadFileAsync(tempFilePath, key);
 
-            // Save the file to the specified path
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await BusinessDocumentationUpload.CopyToAsync(fileStream);
-            }
+            // 4. Get the pre-signed URL
+            string uploadedArtworkUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
+            contractorInfo.BusinessDocumentationKey = key;
 
-            // Save the file path in the database
-            contractorInfo.BusinessDocumentationLink = $"/uploads/{uniqueFileName}";
+            // 5. Delete the temporary file
+            System.IO.File.Delete(tempFilePath);
         }
             // Update ContractorInfo fields from the model
         contractorInfo.ZipCode = model.ZipCode;

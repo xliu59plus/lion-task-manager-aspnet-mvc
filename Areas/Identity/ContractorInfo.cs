@@ -12,7 +12,8 @@ namespace LionTaskManagementApp.Areas.Identity.Data
         // Business Information
         public string CompanyName { get; set; } = string.Empty; // Business Name
         public string EIN { get; set; } = string.Empty; // Employer Identification Number
-        public string BusinessDocumentationLink { get; set; } = string.Empty; // Link to uploaded documentation
+        public string? BusinessDocumentationLink { get; set; } = string.Empty; // this attribute might be removed.
+        public string BusinessDocumentationKey { get; set; } = string.Empty; // only store with Key
 
         // Social Media Links
         public string FacebookLink { get; set; } = string.Empty;
