@@ -7,10 +7,9 @@
 // Scripts
 window.addEventListener("DOMContentLoaded", () => {
   // 获取所有步骤元素和进度条
+  window.currentStep = 0;
   const steps = document.querySelectorAll(".form-step");
   const progressBar = document.getElementById("progressBar");
-  let currentStep = 0;
-
   // 字段映射，用于填充 Review 页
   const fieldMapping = {
     CompanyName: "reviewCompanyName",
@@ -50,7 +49,13 @@ window.addEventListener("DOMContentLoaded", () => {
         reviewField.textContent = formField.value || "N/A";
       }
     });
-
+    // document.addEventListener("DOMContentLoaded", () => {
+    //   // 初始化 ScrollSpy
+    //   new bootstrap.ScrollSpy(document.body, {
+    //     target: "#mainNav", // 确保这个 ID 与导航栏的 ID 匹配
+    //     offset: 100, // 偏移量，可以根据导航栏高度调整
+    //   });
+    // });
     // 填充单选按钮的值
     document.getElementById("reviewPrintsWhite").textContent =
       document.querySelector('input[name="PrintsWhite"]:checked')?.value ||
@@ -66,19 +71,34 @@ window.addEventListener("DOMContentLoaded", () => {
       "N/A";
 
     // Artwork Specialization
-    const artworkSpecialization = document.getElementById(
-      "artworkSpecialization"
-    )?.value;
-    const artworkOtherInput =
-      document.getElementById("artworkOther")?.value || "N/A";
-    document.getElementById("reviewArtworkSpecialization").textContent =
-      artworkSpecialization === "Other"
-        ? artworkOtherInput
-        : artworkSpecialization || "N/A";
+    // const artworkSpecialization = document.getElementById(
+    //   "artworkSpecialization"
+    // )?.value;
+    // const artworkOtherInput =
+    //   document.getElementById("artworkOther")?.value || "N/A";
+    // document.getElementById("reviewArtworkSpecialization").textContent =
+    //   artworkSpecialization === "Other"
+    //     ? artworkOtherInput
+    //     : artworkSpecialization || "N/A";
 
     // Travel Fee Amount
     document.getElementById("reviewTravelFeeAmount").textContent =
       document.getElementById("travelFeeAmount")?.value || "N/A";
+  }
+  const artworkSpecialization = document.getElementById(
+    "artworkSpecialization"
+  );
+  const artworkOther = document.getElementById("artworkOther");
+
+  if (artworkSpecialization) {
+    artworkSpecialization.addEventListener("change", (event) => {
+      if (event.target.value === "Other") {
+        artworkOther.style.display = "block"; // 显示输入框
+      } else {
+        artworkOtherInput.style.display = "none"; // 隐藏输入框
+        artworkOtherInput.value = ""; // 清空输入框值
+      }
+    });
   }
 
   // 绑定 Next 按钮
@@ -86,7 +106,7 @@ window.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", () => {
       if (currentStep < steps.length - 1) {
         if (currentStep === steps.length - 2) {
-          populateReview();
+          populateReview(); // 调用填充数据的函数
         }
         currentStep++;
         showStep(currentStep);
