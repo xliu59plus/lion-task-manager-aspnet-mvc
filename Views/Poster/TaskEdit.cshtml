@@ -66,7 +66,8 @@
                 <label asp-for="ZipCode">Zip Code:</label>
                 <input asp-for="ZipCode" class="form-control" id="zipCode" readonly />
             </div>
-            <input type="hidden" asp-for="LatAndLongitude" id="LatAndLongitude" readonly />
+            <input type="hidden" asp-for="Latitude" id="Latitude" readonly />
+            <input type="hidden" asp-for="Longitude" id="Longitude" readonly />
 
             <div class="form-group">
                 <label asp-for="Deadline" class="control-label"></label>
@@ -151,7 +152,8 @@
 
             var lat = place.geometry.location.lat();
             var lng = place.geometry.location.lng();
-            document.getElementById('LatAndLongitude').value = lat.toString() + " " + lng.toString();
+            document.getElementById('Longitude').value = lng.toString();
+            document.getElementById('Latitude').value = lat.toString();
 
             var addressComponents = place.address_components;
             for (var i = 0; i < addressComponents.length; i++) {

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Stripe;
 using LionTaskManagementApp.Utils;
 using LionTaskManagementApp.Services;
+using LionTaskManagementApp.Services.Hubs;
+using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 // Stripe: besk-hcwu-cqub-khtj-cfvq
@@ -21,8 +23,17 @@ builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireC
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<S3Service>();
+builder.Services.AddScoped<NotificationHubService>();
+
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        ["application/octet-stream"]);
+});
 
 var app = builder.Build();
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -58,6 +69,7 @@ using (var scope = app.Services.CreateScope())
     await UserInitializer.Initialize(userManager, roleManager);
 }
 
+app.MapHub<NotificationHubService>("/NotificationHubService");
 app.Run();
 
 

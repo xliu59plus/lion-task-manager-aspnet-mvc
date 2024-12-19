@@ -69,8 +69,7 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            var taskModel = await _context.Tasks
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var taskModel = await _context.Tasks.FindAsync(id);
             if (taskModel == null)
             {
                 return NotFound();
@@ -94,8 +93,6 @@ namespace LionTaskManagementApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        
 
         private bool TaskModelExists(int id)
         {

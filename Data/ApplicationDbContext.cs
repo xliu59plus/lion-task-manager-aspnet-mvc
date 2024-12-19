@@ -16,4 +16,6 @@ public class ApplicationDbContext : IdentityDbContext<TaskUser>
     public DbSet<TaskModel> Tasks { get; set; } = default!;
     public DbSet<ContractorInfo> ContractorInfos { get; set; }
     public DbSet<PosterInfo> PosterInfos { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<CreateTaskNotificationModel> CreateTaskNotificationModels { get; set; }
 }

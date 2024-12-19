@@ -1,0 +1,85 @@
+﻿@using Microsoft.AspNetCore.SignalR
+@model IEnumerable<LionTaskManagementApp.Models.Notification>
+
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<h1>Notifications</h1>
+
+@if (TempData["NotificationMessage"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["NotificationMessage"]
+    </div>
+    TempData.Remove("NotificationMessage");
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SenderId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecipientId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timestamp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsRead)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SenderId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RecipientId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Message)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Timestamp)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsRead)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(function () {
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/NotificationHubService") // Replace with your hub URL
+            .build();
+
+        console.log(connection);
+
+        connection.on("NotificationMessage", function (message) {
+            console.log("receiving message:" + message);
+            location.reload();
+        });
+
+        connection.start().then(function () {
+            // document.getElementById("sendButton").disabled = false;
+            console.log("singalr started");
+            console.log("connection", connection);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+</script>

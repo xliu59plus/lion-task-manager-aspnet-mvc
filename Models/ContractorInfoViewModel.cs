@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LionTaskManagementApp.Models;
 
@@ -68,8 +69,8 @@ public class ContractorInfoViewModel
     public decimal? CMYKWhiteColorPrice { get; internal set; }
 
     [Required]
-    public string Latitude { get; set; } = string.Empty;
+    public double Latitude { get; set; }
     [Required]
-    public string Longitude { get; set; } = string.Empty;
+    public double Longitude { get; set; }
 
 }

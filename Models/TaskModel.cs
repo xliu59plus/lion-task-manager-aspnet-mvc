@@ -52,8 +52,10 @@ public class TaskModel
     public string ZipCode { get; set; } = string.Empty;
 
     [Required]
-    public string LatAndLongitude { get; set; } = string.Empty;
+    public double Latitude { get; set; }
 
+    [Required]
+    public double Longitude { get; set; }
     public string? TakenById { get; set; }
 
     [Required]
