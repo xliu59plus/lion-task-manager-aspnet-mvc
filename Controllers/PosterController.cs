@@ -10,6 +10,7 @@ using LionTaskManagementApp.Services;
 using LionTaskManagementApp.Utils;
 using LionTaskManagementApp.Services.Hubs;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -20,18 +21,26 @@ namespace LionTaskManagementApp.Controllers
         private readonly SignInManager<TaskUser> _signInManager;
         private readonly S3Service _s3Service;
         private readonly NotificationHubService _notificationHubService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly int BATCH_TO_NOTIFY = 1;
+        private readonly int INTERVAL_TO_NOTIFY = 120; // in seconds
 
-        public PosterController(ApplicationDbContext context, 
-                                    UserManager<TaskUser> userManager, 
-                                    SignInManager<TaskUser> signInManager, 
-                                    S3Service s3Service,
-                                    NotificationHubService notificationHubService)
+
+        
+
+        public PosterController(ApplicationDbContext context,
+                                UserManager<TaskUser> userManager,
+                                SignInManager<TaskUser> signInManager,
+                                S3Service s3Service,
+                                NotificationHubService notificationHubService,
+                                IServiceProvider serviceProvider)
         {
             _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _s3Service = s3Service;
             _notificationHubService = notificationHubService;
+            _serviceProvider = serviceProvider;
         }
 
         [Authorize(Roles = "Poster,Admin")]
@@ -149,95 +158,21 @@ namespace LionTaskManagementApp.Controllers
 
                 // Convert Deadline to UTC
                 taskModel.Deadline = taskModel.Deadline.UtcDateTime;
+                taskModel.LastUpdatedTime = taskModel.CreatedTime;
+
                 // Add the task to the context and save changes
                 _context.Add(taskModel);
                 await _context.SaveChangesAsync(); // please check whether the taskModel has an id.
-                
+
                 // Push Notification to TaskTakers.
-                pushNotificationAsync(taskModel);
+                var currentUserId = User.Identity?.Name;
+                var notificationBackgroundService = _serviceProvider.GetRequiredService<NotificationBackgroundService>();
+                notificationBackgroundService.QueueNotification(taskModel, currentUserId);
 
                 return RedirectToAction(nameof(Index));
             }
 
             return View(taskModel);
-        }
-
-        private async void pushNotificationAsync(TaskModel taskModel)
-        {
-            // 1. get all available users.
-            var users = await _context.ContractorInfos
-                                        .FromSqlRaw(
-                                            @"SELECT *
-                                              FROM contractorinfos
-                                              WHERE userId IN (
-                                                  SELECT userId
-                                                  FROM contractorinfos
-                                                  WHERE longitude IS NOT NULL AND latitude IS NOT NULL
-                                                  ORDER BY POINT(longitude, latitude) <-> POINT({0}, {1}) 
-                                              )",
-                                            taskModel.Longitude, taskModel.Latitude
-                                        )
-                                        .ToListAsync();
-            if (users.Count == 0) {
-                return;
-            }
-
-            // 2. add all of them into createTaskNotificationModels.
-            var notifyingList = new List<CreateTaskNotificationModel>();
-            foreach (var user in users) {
-                notifyingList.Add(new CreateTaskNotificationModel
-                {
-                    UserId = user.UserId,
-                    TaskId = taskModel.Id,
-                    distance = DistanceCalculator.CalculateDistance(taskModel.Latitude, taskModel.Longitude, user.Latitude, user.Longitude),
-                    isNotified = false,
-                });
-            }
-
-            _context.CreateTaskNotificationModels.AddRange(notifyingList);
-            await _context.SaveChangesAsync();
-
-            // looping step
-            var currentUser = await _userManager.GetUserAsync(User);
-            while (true) {
-                // 3.0 check if the task is assigned.
-                var updatedTask = await _context.Tasks.FindAsync(taskModel.Id);
-                if (updatedTask == null  || !updatedTask.TakenById.IsNullOrEmpty()) {
-                    break;
-                }
-
-                // 3. pick 2 from createTaskNotificationModels.
-                var notificationObjects = await _context.CreateTaskNotificationModels
-                                                    .Where(n => n.TaskId == taskModel.Id && !n.isNotified)
-                                                    .OrderBy(n => n.distance)
-                                                    .Take(2)
-                                                    .ToListAsync();
-                if (notificationObjects.Count == 0) {
-                    return;
-                }
-
-                var persistNotificationList = new List<Notification>();
-                // 3.5 add to task notificationList.
-                foreach (var entry in notificationObjects) {
-                    await _notificationHubService.SendMessage(entry.UserId, "You have new task invite!");
-                    persistNotificationList.Add(new Notification
-                    {
-                        IsRead = false,
-                        SenderId = currentUser.Id,
-                        RecipientId = entry.UserId,
-                        Message = "You have new task invite, visit home page now!",
-                        Timestamp = DateTimeOffset.UtcNow
-                    });
-
-                    entry.isNotified = true;
-                }
-
-                _context.Notifications.AddRange(persistNotificationList);
-                await _context.SaveChangesAsync();
-
-                // 5. tread stop for 5 min, and then loop again.
-                Thread.Sleep(TimeSpan.FromMinutes(5));
-            }
         }
 
         [Authorize(Roles = "Poster,Admin")]

@@ -1,11 +1,11 @@
 ﻿namespace LionTaskManagementApp.Models
 {
-    public class CreateTaskNotificationModel
+    public class CreateTaskNotificationQueueModel
     {
         public int Id { get; set; }
         public int TaskId { get; set; }
-        public String? UserId { get; set; }
-        public bool isNotified { get; set; }
-        public double distance { get; set; }
+        public String? NotifiedUserId { get; set; }
+        public bool IsNotified { get; set; }
+        public double Distance { get; set; }
     }
 }

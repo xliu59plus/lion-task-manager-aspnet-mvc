@@ -61,7 +61,9 @@ public class TaskModel
     [Required]
     public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.MinValue;
 
-    // New properties
+    [Required]
+    public DateTimeOffset LastUpdatedTime { get; set; } = DateTimeOffset.MinValue;
+
     [Required]
     public DateTimeOffset Deadline { get; set; } = DateTimeOffset.MinValue;
 

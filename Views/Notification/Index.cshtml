@@ -1,12 +1,12 @@
 ﻿@using Microsoft.AspNetCore.SignalR
-@model IEnumerable<LionTaskManagementApp.Models.Notification>
+@model IEnumerable<LionTaskManagementApp.Models.ContractorNotificationModel>
 
 
 @{
-    ViewData["Title"] = "Notifications";
+    ViewData["Title"] = "Notification Center";
 }
 
-<h1>Notifications</h1>
+<h1>Notification Center</h1>
 
 @if (TempData["NotificationMessage"] != null)
 {
@@ -19,42 +19,28 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SenderId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RecipientId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timestamp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsRead)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.IsNotified)</th>
+            <th>@Html.DisplayNameFor(model => model.IsRead)</th>
+            <th>Distance (miles)</th>
+            <th>Budget (USD)</th>
+            <th>@Html.DisplayNameFor(model => model.CreatedDatetime)</th>
+            <th>@Html.DisplayNameFor(model => model.ExpirationDatetime)</th>
+            <th>View Detail</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SenderId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RecipientId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Message)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Timestamp)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsRead)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsNotified)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsRead)</td>
+                <td>@Html.DisplayFor(modelItem => item.DistanceInMiles)</td>
+                <td>@Html.DisplayFor(modelItem => item.Budget)</td>
+                <td class="relative-time" data-datetime="@item.CreatedDatetime">@item.CreatedDatetime</td>
+                <td class="relative-time" data-datetime="@item.ExpirationDatetime">@item.ExpirationDatetime</td>
+                <td><a href="@Url.Action("TakerDetails", "Taker", new { id = item.TaskId })">View Detail</a></td>
             </tr>
         }
     </tbody>
@@ -63,11 +49,20 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script>
     $(function () {
+        function updateRelativeTime() {
+            $('.relative-time').each(function () {
+                var datetime = $(this).data('datetime');
+                var timeAgo = moment.utc(datetime).fromNow();
+                $(this).text(timeAgo);
+            });
+        }
+
+        updateRelativeTime();
+        setInterval(updateRelativeTime, 60000); // Update every minute
+
         var connection = new signalR.HubConnectionBuilder()
             .withUrl("/NotificationHubService") // Replace with your hub URL
             .build();
-
-        console.log(connection);
 
         connection.on("NotificationMessage", function (message) {
             console.log("receiving message:" + message);
@@ -75,11 +70,31 @@
         });
 
         connection.start().then(function () {
-            // document.getElementById("sendButton").disabled = false;
-            console.log("singalr started");
-            console.log("connection", connection);
+            console.log("SignalR started");
         }).catch(function (err) {
             return console.error(err.toString());
         });
     });
 </script>
+@* <script> *@
+@*     $(function () { *@
+@*         var connection = new signalR.HubConnectionBuilder() *@
+@*             .withUrl("/NotificationHubService") // Replace with your hub URL *@
+@*             .build(); *@
+
+@*         console.log(connection); *@
+
+@*         connection.on("NotificationMessage", function (message) { *@
+@*             console.log("receiving message:" + message); *@
+@*             location.reload(); *@
+@*         }); *@
+
+@*         connection.start().then(function () { *@
+@*             // document.getElementById("sendButton").disabled = false; *@
+@*             console.log("singalr started"); *@
+@*             console.log("connection", connection); *@
+@*         }).catch(function (err) { *@
+@*             return console.error(err.toString()); *@
+@*         }); *@
+@*     }); *@
+@* </script> *@
