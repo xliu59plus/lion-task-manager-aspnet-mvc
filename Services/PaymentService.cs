@@ -13,7 +13,7 @@ namespace LionTaskManagementApp.Services
         public PaymentService(S3Service s3Service)
         {
             _s3Service = s3Service;
-            _domain = Environment.GetEnvironmentVariable("TaskManagerDomain") ?? "https://localhost:7227";
+            _domain = Environment.GetEnvironmentVariable("TASK_MANAGER_DOMAIN") ?? "https://localhost:7227";
         }
 
         public async Task<Session> CreatePayment(TaskModel taskModel, decimal cost) {

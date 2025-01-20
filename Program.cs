@@ -9,12 +9,8 @@ using LionTaskManagementApp.Services.Hubs;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
-// Stripe: besk-hcwu-cqub-khtj-cfvq
-// pk_test_51QEfHKG49cs2m96oj7OFeu4vsXpX5qEdCUZOMpsLrNvE2TuohpnLBkB0uUNlv5MF3GAvaKUkp6Trb1LE6ABRxJEl00F2k9VvhM
-// Add services to the container.
-// Google Maps JavaScript API key: AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+var connectionString = Environment.GetEnvironmentVariable("TASK_MANAGEMENT_CONNECTIONSTRING") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<TaskUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
@@ -57,7 +53,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-StripeConfiguration.ApiKey=builder.Configuration.GetSection("Stripe:SecretKey").Get<String>();
+StripeConfiguration.ApiKey= Environment.GetEnvironmentVariable("STRIPE_SK");
 
 app.UseAuthorization();
 
