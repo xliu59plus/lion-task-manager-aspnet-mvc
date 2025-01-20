@@ -8,8 +8,9 @@ namespace LionTaskManagementApp.Areas.Identity.Data
     {
         [Key]
         public string UserId { get; set; } = string.Empty; // User identifier
-       // public bool IsApproved { get; set;} = false;
-        
+        public string UserName { get; set; } = String.Empty;
+        public string FullName { get; set; } = string.Empty;
+
         // Business Information
         public string CompanyName { get; set; } = string.Empty; // Business Name
         public string EIN { get; set; } = string.Empty; // Employer Identification Number
@@ -21,10 +22,6 @@ namespace LionTaskManagementApp.Areas.Identity.Data
         public string TikTokLink { get; set; } = string.Empty;
         public string InstagramLink { get; set; } = string.Empty;
         public string WallpenHubProfileLink { get; set; } = string.Empty;
-
-      
-        // Banking Information
-        public string BankingInfo { get; set; } = string.Empty; // ACH or direct deposit info
 
         // Wallpen Machine Information
         public string WallpenSerialNumber { get; set; } = string.Empty;
@@ -41,7 +38,7 @@ namespace LionTaskManagementApp.Areas.Identity.Data
         // Travel Preferences
         public decimal PreferenceDistance { get; set; } = decimal.MaxValue; // Maximum travel distance
         public decimal TravelFeeOverLimit { get; set; } = 0; // Travel fee beyond preference distance
-        public bool ChargeTravelFeesOverLimit { get; set; } = false; // Charges travel fees if over limit
+        public bool DoesChargeTravelFeesOverLimit { get; set; } = false; // Charges travel fees if over limit
 
         // Artwork Specialization
         public string ArtworkSpecialization { get; set; } = string.Empty; // Specialized art style

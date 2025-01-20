@@ -6,6 +6,12 @@
     <title>@ViewData["Title"] - LionTaskManagementApp</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/relativeTime.js"></script> <!-- Include the relative time JavaScript file -->
+    <script src="~/js/signalRNotifications.js"></script> <!-- Include the SignalR notifications JavaScript file -->
 
     <link rel="stylesheet" href="~/css/styles.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -58,10 +64,13 @@
     </nav>
 
     <div class="container mt-5">
+        <div id="notification-message" class="alert alert-info" style="display:none;"></div>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+
+    <div id="notification-message" class="alert alert-info" style="display:none;"></div>
 
     <footer class="border-top footer text-muted py-3">
         <div class="container text-center">
@@ -69,9 +78,25 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js"></script>
+    <script>
+        $(function () {
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/NotificationHubService") // Replace with your hub URL
+                .build();
+
+            connection.on("NotificationMessage", function (message) {
+                var currentPath = window.location.pathname.toLowerCase();
+                $("#notification-message").text("There is a new notification, please visit the notification hub").show();
+            });
+
+            connection.start().then(function () {
+                console.log("SignalR started");
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

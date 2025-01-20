@@ -93,4 +93,10 @@ public class TaskModel
 
     [NotMapped]
     public string? ArtworkUrl { get; set; }
+
+    [Required]
+    public string? PaymentSessionId { get; set; } = String.Empty;
+
+    [Required]
+    public string PaymentIntentId { get; set; } = String.Empty;
 }

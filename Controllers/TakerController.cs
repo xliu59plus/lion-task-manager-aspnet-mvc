@@ -114,7 +114,7 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
             // 2. Save the uploaded file to the temporary location
             using (var stream = new FileStream(tempFilePath, FileMode.Create))
             {
-                BusinessDocumentationUpload.CopyToAsync(stream);
+                await BusinessDocumentationUpload.CopyToAsync(stream);
             }
 
             // 3. Upload to S3 from the temporary file
@@ -128,7 +128,10 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
             // 5. Delete the temporary file
             System.IO.File.Delete(tempFilePath);
         }
-            // Update ContractorInfo fields from the model
+
+
+        // Update ContractorInfo fields from the model
+        var currentUser = await _userManager.GetUserAsync(User);  
         contractorInfo.ZipCode = model.ZipCode;
         contractorInfo.PreferenceDistance = model.MaxTravelDistanceMiles;
         contractorInfo.FirstLine = model.FirstLine;
@@ -141,16 +144,16 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
         contractorInfo.InstagramLink = model.InstagramLink;
         contractorInfo.TikTokLink = model.TikTokLink;
         contractorInfo.WallpenHubProfileLink = model.WallpenHubProfileLink;
-        contractorInfo.BankingInfo = model.BankingInfo;
         contractorInfo.ArtworkSpecialization = model.ArtworkSpecialization;
         contractorInfo.DoesPrintWhiteColor = model.DoesPrintWhiteColor;
         contractorInfo.SupportsCMYK = model.SupportsCMYK;
         contractorInfo.WallpenMachineModel = model.WallpenMachineModel;
         contractorInfo.WallpenSerialNumber = model.WallpenSerialNumber;
-        contractorInfo.ChargeTravelFeesOverLimit = model.ChargeTravelFeesOverLimit;
+        contractorInfo.DoesChargeTravelFeesOverLimit = model.DoesChargeTravelFeesOverLimit;
         contractorInfo.TravelFeeOverLimit = model.TravelFeeOverLimit;
         contractorInfo.Longitude = model.Longitude;
         contractorInfo.Latitude = model.Latitude;
+        contractorInfo.CostPerSqrFoot = model.CMYKWhiteColorPrice ?? 0;
 
         // Pricing field
         contractorInfo.CMYKPrice = model.CMYKPrice;
@@ -221,6 +224,15 @@ public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,
             if (taskModel == null)
             {
                 return NotFound();
+            }
+
+            if (taskModel.WallPicKey != null) {
+                taskModel.WallPicUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.WallPicKey, TimeSpan.FromMinutes(10));
+            }
+
+            if (taskModel.ArtworkKey != null)
+            {
+                taskModel.ArtworkUrl = await _s3Service.GetPreSignedUrlAsync(taskModel.ArtworkKey, TimeSpan.FromMinutes(10));
             }
 
             return View(taskModel);

@@ -26,7 +26,6 @@ builder.Services.AddScoped<S3Service>();
 builder.Services.AddScoped<NotificationHubService>();
 builder.Services.AddScoped<PaymentService>();
 
-
 // Register the NotificationBackgroundService as both a hosted service and a singleton service
 builder.Services.AddSingleton<NotificationBackgroundService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<NotificationBackgroundService>());

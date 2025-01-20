@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionTaskManagementApp.Migrations
 {
     /// <inheritdoc />
-    public partial class postgresql_migration_352 : Migration
+    public partial class postgresql_migration_283 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,6 +58,8 @@ namespace LionTaskManagementApp.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: false),
                     EIN = table.Column<string>(type: "text", nullable: false),
                     BusinessDocumentationLink = table.Column<string>(type: "text", nullable: true),
@@ -66,7 +68,6 @@ namespace LionTaskManagementApp.Migrations
                     TikTokLink = table.Column<string>(type: "text", nullable: false),
                     InstagramLink = table.Column<string>(type: "text", nullable: false),
                     WallpenHubProfileLink = table.Column<string>(type: "text", nullable: false),
-                    BankingInfo = table.Column<string>(type: "text", nullable: false),
                     WallpenSerialNumber = table.Column<string>(type: "text", nullable: false),
                     WallpenMachineModel = table.Column<string>(type: "text", nullable: false),
                     DoesPrintWhiteColor = table.Column<bool>(type: "boolean", nullable: false),
@@ -98,36 +99,19 @@ namespace LionTaskManagementApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreateTaskNotificationModels",
+                name: "CreateTaskNotificationQueueModels",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TaskId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: true),
-                    isNotified = table.Column<bool>(type: "boolean", nullable: false),
-                    distance = table.Column<double>(type: "double precision", nullable: false)
+                    NotifiedUserId = table.Column<string>(type: "text", nullable: true),
+                    IsNotified = table.Column<bool>(type: "boolean", nullable: false),
+                    Distance = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreateTaskNotificationModels", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SenderId = table.Column<string>(type: "text", nullable: false),
-                    RecipientId = table.Column<string>(type: "text", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    Timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.PrimaryKey("PK_CreateTaskNotificationQueueModels", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -136,8 +120,7 @@ namespace LionTaskManagementApp.Migrations
                 {
                     PosterId = table.Column<string>(type: "text", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     AddressLine1 = table.Column<string>(type: "text", nullable: false),
                     AddressLine2 = table.Column<string>(type: "text", nullable: true),
@@ -150,6 +133,25 @@ namespace LionTaskManagementApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PosterInfos", x => x.PosterId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TaskNotifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SenderId = table.Column<string>(type: "text", nullable: false),
+                    RecipientId = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    TaskId = table.Column<int>(type: "integer", nullable: false),
+                    Distance = table.Column<double>(type: "double precision", nullable: false),
+                    MessageTimestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskNotifications", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -177,6 +179,7 @@ namespace LionTaskManagementApp.Migrations
                     Longitude = table.Column<double>(type: "double precision", nullable: false),
                     TakenById = table.Column<string>(type: "text", nullable: true),
                     CreatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastUpdatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Deadline = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ProjectResolution = table.Column<int>(type: "integer", nullable: false),
                     IndoorOutdoor = table.Column<string>(type: "text", nullable: false),
@@ -356,13 +359,13 @@ namespace LionTaskManagementApp.Migrations
                 name: "ContractorInfos");
 
             migrationBuilder.DropTable(
-                name: "CreateTaskNotificationModels");
-
-            migrationBuilder.DropTable(
-                name: "Notifications");
+                name: "CreateTaskNotificationQueueModels");
 
             migrationBuilder.DropTable(
                 name: "PosterInfos");
+
+            migrationBuilder.DropTable(
+                name: "TaskNotifications");
 
             migrationBuilder.DropTable(
                 name: "Tasks");

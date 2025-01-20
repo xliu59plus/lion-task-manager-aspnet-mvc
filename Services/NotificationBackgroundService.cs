@@ -62,7 +62,7 @@ public class NotificationBackgroundService : BackgroundService
                     {
                         NotifiedUserId = c.UserId,
                         TaskId = taskModel.Id,
-                        Distance = DistanceCalculator.CalculateDistance(taskModel.Latitude, taskModel.Longitude, c.Latitude, c.Longitude),
+                        Distance = DistanceCalculator.GetDistance(taskModel.Latitude, taskModel.Longitude, c.Latitude, c.Longitude),
                         IsNotified = false,
                     });
                 }

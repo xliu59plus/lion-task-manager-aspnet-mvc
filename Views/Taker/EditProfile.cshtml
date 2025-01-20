@@ -26,7 +26,7 @@
         <button type="button" class="btn btn-primary next-btn">Next</button>
     </div>
 
-    <div id="step2" class="form-step d-done">
+    <div id="step2" class="form-step d-none">
         <h4>Address Information</h4>
         <hr>
         <div class="form-group">
@@ -58,8 +58,8 @@
             <label asp-for="ZipCode">Zip Code:</label>
             <input asp-for="ZipCode" class="form-control" id="zipCode" placeholder="Enter Zip Code" />
         </div>
-        <input type="hidden" id="latitude" name="latitude" readonly />
-        <input type="hidden" id="longitude" name="longitude" readonly />
+        <input asp-for="Latitude" type="hidden" id="latitude" readonly />
+        <input asp-for="Longitude" type="hidden" id="longitude" readonly />
         <div class="mt-5 d-flex justify-content-between px-4 py-2">
             <button type="button" class="btn btn-secondary prev-btn">Previous</button>
             <button type="button" class="btn btn-primary next-btn">Next</button>
@@ -71,25 +71,25 @@
         <hr>
         <h5>Wallpen E2 Machine Information</h5>
         <div class="form-group">
-            <label for="WallpenModel">Wallpen Machine Model:</label>
-            <input type="text" id="WallpenMachineModel" name="WallpenMachineModel" class="form-control" placeholder="Enter Wallpen Machine Model (e.g., E2)" required />
+            <label asp-for="WallpenMachineModel">Wallpen Machine Model:</label>
+            <input asp-for="WallpenMachineModel" class="form-control" placeholder="Enter Wallpen Machine Model (e.g., E2)" required />
         </div>
         <div class="form-group">
-            <label for="WallpenSerialNumber">Wallpen E2 Machine Series Number:</label>
-            <input type="text" id="WallpenSerialNumber" name="WallpenSerialNumber" class="form-control" placeholder="Enter Serial Number" required />
+            <label asp-for="WallpenSerialNumber">Wallpen E2 Machine Series Number:</label>
+            <input asp-for="WallpenSerialNumber" class="form-control" placeholder="Enter Serial Number" required />
         </div>
         <div class="form-group">
             <label>Does your machine print white color?</label>
             <div>
-                <input type="radio" id="PrintsWhiteYes" name="PrintsWhite" value="true" /> Yes
-                <input type="radio" id="PrintsWhiteNo" name="PrintsWhite" value="false" /> No
+                <input asp-for="DoesPrintWhiteColor" type="radio" value="true" /> Yes
+                <input asp-for="DoesPrintWhiteColor" type="radio" value="false" /> No
             </div>
         </div>
         <div class="form-group">
             <label>Supports CMYK Colors?</label>
             <div>
-                <input type="radio" id="SupportsCMYKYes" name="SupportsCMYK" value="true" /> Yes
-                <input type="radio" id="SupportsCMYKNo" name="SupportsCMYK" value="false" /> No
+                <input asp-for="SupportsCMYK" type="radio" value="true" /> Yes
+                <input asp-for="SupportsCMYK" type="radio" value="false" /> No
             </div>
         </div>
         <h4>Artwork Specialization</h4>
@@ -113,16 +113,16 @@
     <div id="step4" class="form-step d-none">
         <h4>Pricing Information</h4>
         <div class="form-group">
-            <label for="CMYKPrice">CMYK Colors Price (per square footage):</label>
-            <input type="number" id="CMYKPrice" name="CMYKPrice" class="form-control" placeholder="Enter price for CMYK colors" />
+            <label asp-for="CMYKPrice">CMYK Colors Price (per square footage):</label>
+            <input asp-for="CMYKPrice" class="form-control" placeholder="Enter price for CMYK colors" />
         </div>
         <div class="form-group">
-            <label for="WhitePrice">White Color Price (per square footage):</label>
-            <input type="number" id="WhitePrice" name="WhitePrice" class="form-control" placeholder="Enter price for white color" />
+            <label asp-for="WhiteColorPrice">White Color Price (per square footage):</label>
+            <input asp-for="WhiteColorPrice" class="form-control" placeholder="Enter price for white color" />
         </div>
         <div class="form-group">
-            <label for="CMYKWhitePrice">CMYK + White Colors Price (per square footage):</label>
-            <input type="number" id="CMYKWhitePrice" name="CMYKWhitePrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
+            <label asp-for="CMYKWhiteColorPrice">CMYK + White Colors Price (per square footage):</label>
+            <input asp-for="CMYKWhiteColorPrice" class="form-control" placeholder="Enter price for CMYK + white colors" />
         </div>
         <div class="mt-5 d-flex justify-content-between px-4 py-2">
             <button type="button" class="btn btn-secondary prev-btn">Previous</button>
@@ -136,22 +136,22 @@
         <div class="form-group">
             <label>Are you willing to travel over 100 miles from your Zip Code?</label>
             <div>
-                <input type="radio" id="travelOver100Yes" name="travelOver100" value="Yes" /> Yes
-                <input type="radio" id="travelOver100No" name="travelOver100" value="No" /> No
+                <input asp-for="MaxTravelDistanceMiles" type="radio" value="true" /> Yes
+                <input asp-for="MaxTravelDistanceMiles" type="radio" value="false" /> No
             </div>
         </div>
         <div class="form-group">
             <label>Do you charge travel fees over 100 miles from your location?</label>
             <div>
-                <input type="radio" id="travelFeeYes" name="TravelFees" value="Yes" /> Yes
-                <input type="radio" id="travelFeeNo" name="TravelFees" value="No" /> No
+                <input asp-for="DoesChargeTravelFeesOverLimit" type="radio" value="true" /> Yes
+                <input asp-for="DoesChargeTravelFeesOverLimit" type="radio" value="false" /> No
             </div>
         </div>
         <div class="form-group" id="travelFeeDetails" style="display: none;">
             <label>What is your fee traveling over 100 miles?</label>
             <div class="form-group">
-                <input type="number" id="travelFeeAmount" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
-                <select id="feeType" class="form-control mt-2">
+                <input asp-for="TravelFeeOverLimit" class="form-control" placeholder="Enter fee (e.g., 50.00)" />
+                <select asp-for="FeeType" class="form-control mt-2">
                     <option value="PerSquareFoot">Per Square Footage</option>
                     <option value="OneTime">One Time Fee</option>
                 </select>
@@ -162,7 +162,6 @@
             <button type="button" class="btn btn-primary next-btn">Next</button>
         </div>
     </div>
-
 
     <div id="step6" class="form-step d-none">
         <h4>Social Media Links</h4>
@@ -197,17 +196,17 @@
 
             <p><strong>Wallpen Machine Model:</strong> <span id="reviewWallpenMachineModel"></span></p>
             <p><strong>Wallpen Serial Number:</strong> <span id="reviewWallpenSerialNumber"></span></p>
-            <p><strong>Prints White:</strong> <span id="reviewPrintsWhite"></span></p>
+            <p><strong>Prints White:</strong> <span id="reviewDoesPrintWhiteColor"></span></p>
             <p><strong>Supports CMYK Colors:</strong> <span id="reviewSupportsCMYK"></span></p>
             <p><strong>Artwork Specialization:</strong> <span id="reviewArtworkSpecialization"></span></p>
 
             <p><strong>CMYK Colors Price (per square footage):</strong> <span id="reviewCMYKPrice"></span></p>
-            <p><strong>White Color Price (per square footage):</strong> <span id="reviewWhitePrice"></span></p>
-            <p><strong>CMYK + White Colors Price (per square footage):</strong> <span id="reviewCMYKWhitePrice"></span></p>
+            <p><strong>White Color Price (per square footage):</strong> <span id="reviewWhiteColorPrice"></span></p>
+            <p><strong>CMYK + White Colors Price (per square footage):</strong> <span id="reviewCMYKWhiteColorPrice"></span></p>
 
-            <p><strong>Are you willing to travel over 100 miles?</strong> <span id="reviewTravelOver100"></span></p>
-            <p><strong>Do you charge travel fees over 100 miles?</strong> <span id="reviewChargeTravelFees"></span></p>
-            <p><strong>Travel Fee Amount:</strong> <span id="reviewTravelFeeAmount"></span></p>
+            <p><strong>Are you willing to travel over 100 miles?</strong> <span id="reviewMaxTravelDistanceMiles"></span></p>
+            <p><strong>Do you charge travel fees over 100 miles?</strong> <span id="reviewChargeTravelFeesOverLimit"></span></p>
+            <p><strong>Travel Fee Amount:</strong> <span id="reviewTravelFeeOverLimit"></span></p>
 
             <p><strong>Facebook Link:</strong> <span id="reviewFacebookLink"></span></p>
             <p><strong>TikTok Link:</strong> <span id="reviewTikTokLink"></span></p>
@@ -265,4 +264,4 @@
         });
     }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places&callback=initAutoComplete" async defer></script> 
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdkv4tRPCXtSDaqbRpQLQ6QjER5zIAagg&libraries=places&callback=initAutoComplete" async defer></script>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,7 +7,7 @@ namespace LionTaskManagementApp.Models;
 public class ContractorInfoViewModel
 {
     [Required]
-    public string UserId { get; set; } = string.Empty;// You might need this to associate with the user
+    public string UserId { get; set; } = string.Empty; // You might need this to associate with the user
 
     [Required]
     public decimal PricePerSquareFoot { get; set; }
@@ -15,13 +16,13 @@ public class ContractorInfoViewModel
     public string FullAddress { get; set; } = string.Empty;
 
     [Required]
-    public int PreferenceDistance { get; set; } 
+    public int PreferenceDistance { get; set; }
 
     [Required]
     public string FirstLine { get; set; } = string.Empty;
-    
+
     public string? SecondLine { get; set; } = string.Empty;
-    
+
     [Required]
     public string StateProvince { get; set; } = string.Empty;
 
@@ -33,44 +34,62 @@ public class ContractorInfoViewModel
 
     [Required]
     public decimal MaxTravelDistanceMiles { get; set; }
+
     [Required]
-    public string CompanyName { get; internal set; } = string.Empty;
+    public string CompanyName { get; set; } = string.Empty;
+
     [Required]
-    public string EIN { get; internal set; } = string.Empty;
+    public string EIN { get; set; } = string.Empty;
+
     [Required]
-    public string FacebookLink { get; internal set; } = string.Empty;
+    public string FacebookLink { get; set; } = string.Empty;
+
     [Required]
-    public string InstagramLink { get; internal set; } = string.Empty;
+    public string InstagramLink { get; set; } = string.Empty;
+
     [Required]
-    public string TikTokLink { get; internal set; } = string.Empty;
+    public string TikTokLink { get; set; } = string.Empty;
+
     [Required]
-    public string WallpenHubProfileLink { get; internal set; } = string.Empty;
+    public string WallpenHubProfileLink { get; set; } = string.Empty;
+
     [Required]
-    public string BankingInfo { get; internal set; } = string.Empty;
+    public string ArtworkSpecialization { get; set; } = string.Empty;
+
     [Required]
-    public string ArtworkSpecialization { get; internal set; } = string.Empty;
+    public bool DoesPrintWhiteColor { get; set; }
+
     [Required]
-    public bool DoesPrintWhiteColor { get; internal set; }
+    public bool SupportsCMYK { get; set; }
+
     [Required]
-    public bool SupportsCMYK { get; internal set; }
+    public string WallpenMachineModel { get; set; } = string.Empty;
+
     [Required]
-    public string WallpenMachineModel { get; internal set; } = string.Empty;
+    public string WallpenSerialNumber { get; set; } = string.Empty;
+
     [Required]
-    public string WallpenSerialNumber { get; internal set; } = string.Empty;
+    public bool DoesChargeTravelFeesOverLimit { get; set; }
+
     [Required]
-    public bool ChargeTravelFeesOverLimit { get; internal set; }
+    public decimal TravelFeeOverLimit { get; set; }
+
     [Required]
-    public decimal TravelFeeOverLimit { get; internal set; }
+    public string FeeType { get; set; } = string.Empty;
+
     [Required]
-    public decimal? CMYKPrice { get; internal set; }
+    public decimal? CMYKPrice { get; set; }
+
     [Required]
-    public decimal? WhiteColorPrice { get; internal set; }
+    public decimal? WhiteColorPrice { get; set; }
+
     [Required]
-    public decimal? CMYKWhiteColorPrice { get; internal set; }
+    public decimal? CMYKWhiteColorPrice { get; set; }
 
     [Required]
     public double Latitude { get; set; }
+
     [Required]
     public double Longitude { get; set; }
-
 }
+

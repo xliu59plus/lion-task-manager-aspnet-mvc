@@ -1,92 +1,72 @@
-﻿using Stripe;
+﻿using LionTaskManagementApp.Models;
+using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using Stripe.Checkout;
 
 namespace LionTaskManagementApp.Services
 {
     public class PaymentService
     {
-        public PaymentService()
+        private readonly S3Service _s3Service;
+        private readonly String _domain;
+
+        public PaymentService(S3Service s3Service)
         {
-            StripeConfiguration.ApiKey = "your_stripe_secret_key";
+            _s3Service = s3Service;
+            _domain = Environment.GetEnvironmentVariable("TaskManagerDomain") ?? "https://localhost:7227";
         }
 
-        public async Task<Session> CreateCheckoutSessionAsync(List<ProductEntity> products, string successUrl, string cancelUrl, string customerEmail)
-        {
-            var options = new SessionCreateOptions
+        public async Task<Session> CreatePayment(TaskModel taskModel, decimal cost) {
+            List<ProductEntity> productList = new List<ProductEntity>();
+            
+            // 1. create product,
+            var productOption = new ProductCreateOptions
             {
-                SuccessUrl = successUrl,
-                CancelUrl = cancelUrl,
-                LineItems = new List<SessionLineItemOptions>(),
+                Name = taskModel.Title,
+                Description = taskModel.Description,
+                Images = new List<string> {await _s3Service.GetPreSignedUrlAsync(taskModel.ArtworkKey, TimeSpan.FromMinutes(10))}
+            };
+
+            var productService = new ProductService();
+            var product = productService.Create(productOption);
+
+            // 2. create price
+            var priceOptions = new PriceCreateOptions
+            {
+                Product = product.Id,
+                UnitAmount = (long?)cost,
+                Currency = "usd",
+            };
+
+            var priceService = new PriceService();
+            var priceItem = priceService.Create(priceOptions);
+
+            // 3. create the payment session
+            var checkoutOption = new SessionCreateOptions
+            {
                 Mode = "payment",
-                CustomerEmail = customerEmail
-            };
-
-            foreach (var item in products)
-            {
-                var sessionListItem = new SessionLineItemOptions
-                {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        UnitAmount = (long)(item.Rate * item.Quantity),
-                        Currency = "usd",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = item.Product.ToString(),
-                        }
-                    },
-                    Quantity = item.Quantity
-                };
-
-                options.LineItems.Add(sessionListItem);
-            }
-
-            var service = new SessionService();
-            return await service.CreateAsync(options);
-        }
-
-        public async Task<Account> CreateConnectedAccountAsync(string email, string bankAccountNumber, string bankRoutingNumber)
-        {
-            var options = new AccountCreateOptions
-            {
-                Type = "custom",
-                Country = "US",
-                Email = email,
-                Capabilities = new AccountCapabilitiesOptions
-                {
-                    CardPayments = new AccountCapabilitiesCardPaymentsOptions { Requested = true },
-                    Transfers = new AccountCapabilitiesTransfersOptions { Requested = true },
+                LineItems = new List<SessionLineItemOptions> {
+                    new SessionLineItemOptions {
+                        Price = priceItem.Id,
+                        Quantity = 1,
+                    }
                 },
-                ExternalAccount = new AccountBankAccountOptions
-                {
-                    AccountNumber = bankAccountNumber,
-                    RoutingNumber = bankRoutingNumber,
-                    Country = "US",
-                    Currency = "usd",
-                }
+                SuccessUrl = _domain + "/Checkout/PaymentSuccessful?sessionId={CHECKOUT_SESSION_ID}&taskId=" + taskModel.Id,
+                CancelUrl = _domain + "/Checkout/PaymentFailed?sessionId={CHECKOUT_SESSION_ID}&taskId=" + taskModel.Id,
             };
-            var service = new AccountService();
-            return await service.CreateAsync(options);
+
+            var sessionService = new SessionService();
+            Session session = sessionService.Create(checkoutOption);
+
+            return session;
         }
 
-        public async Task<Payout> CreatePayoutAsync(long amount, string currency, string stripeAccountId)
+        public async Task<Session> GetPaymentDetailsAsync(string sessionId)
         {
-            var options = new PayoutCreateOptions
-            {
-                Amount = amount,
-                Currency = currency,
-            };
-            var service = new PayoutService();
-            return await service.CreateAsync(options, new RequestOptions { StripeAccount = stripeAccountId });
+            var sessionService = new SessionService();
+            var session = await sessionService.GetAsync(sessionId);
+            return session;
         }
 
-        public async Task<Refund> CreateRefundAsync(string paymentIntentId)
-        {
-            var options = new RefundCreateOptions
-            {
-                PaymentIntent = paymentIntentId,
-            };
-            var service = new RefundService();
-            return await service.CreateAsync(options);
-        }
     }
 }

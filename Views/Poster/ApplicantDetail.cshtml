@@ -1,0 +1,72 @@
+﻿@model LionTaskManagementApp.Controllers.ApplicantDetailViewModel
+
+@{
+    ViewData["Title"] = "Applicant Details";
+}
+
+<h1>Applicant Details</h1>
+
+<div>
+    <h4>Applicant Information</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContractorInfo.UserName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContractorInfo.UserName)
+        </dd>
+        <dt class="col-sm-2">
+            Name
+        </dt>
+        <dd class="col-sm-10">
+            @Model.ContractorInfo.FullName
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContractorInfo.CompanyName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContractorInfo.CompanyName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContractorInfo.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContractorInfo.City)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContractorInfo.StateProvince)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContractorInfo.StateProvince)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContractorInfo.ZipCode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContractorInfo.ZipCode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContractorInfo.CostPerSqrFoot)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContractorInfo.CostPerSqrFoot)
+        </dd>
+        <dt class="col-sm-2">
+            Distance
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Distance Miles
+        </dd>
+        <dt class="col-sm-2">
+            Cost
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Cost
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="ConfirmRequest" asp-route-taskId="@Model.TaskId" asp-route-cost="@Model.Cost" asp-route-applicantId="@Model.ContractorInfo.UserId" class="btn btn-primary">Confirm</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

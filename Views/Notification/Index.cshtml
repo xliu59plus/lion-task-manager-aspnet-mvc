@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.SignalR
 @model IEnumerable<LionTaskManagementApp.Models.ContractorNotificationModel>
 
-
 @{
     ViewData["Title"] = "Notification Center";
 }
@@ -45,56 +44,3 @@
         }
     </tbody>
 </table>
-<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-<script src="~/lib/jquery/dist/jquery.js"></script>
-<script>
-    $(function () {
-        function updateRelativeTime() {
-            $('.relative-time').each(function () {
-                var datetime = $(this).data('datetime');
-                var timeAgo = moment.utc(datetime).fromNow();
-                $(this).text(timeAgo);
-            });
-        }
-
-        updateRelativeTime();
-        setInterval(updateRelativeTime, 60000); // Update every minute
-
-        var connection = new signalR.HubConnectionBuilder()
-            .withUrl("/NotificationHubService") // Replace with your hub URL
-            .build();
-
-        connection.on("NotificationMessage", function (message) {
-            console.log("receiving message:" + message);
-            location.reload();
-        });
-
-        connection.start().then(function () {
-            console.log("SignalR started");
-        }).catch(function (err) {
-            return console.error(err.toString());
-        });
-    });
-</script>
-@* <script> *@
-@*     $(function () { *@
-@*         var connection = new signalR.HubConnectionBuilder() *@
-@*             .withUrl("/NotificationHubService") // Replace with your hub URL *@
-@*             .build(); *@
-
-@*         console.log(connection); *@
-
-@*         connection.on("NotificationMessage", function (message) { *@
-@*             console.log("receiving message:" + message); *@
-@*             location.reload(); *@
-@*         }); *@
-
-@*         connection.start().then(function () { *@
-@*             // document.getElementById("sendButton").disabled = false; *@
-@*             console.log("singalr started"); *@
-@*             console.log("connection", connection); *@
-@*         }).catch(function (err) { *@
-@*             return console.error(err.toString()); *@
-@*         }); *@
-@*     }); *@
-@* </script> *@

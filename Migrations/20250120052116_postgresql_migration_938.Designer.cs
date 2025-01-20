@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionTaskManagementApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250107052352_postgresql_migration_607")]
-    partial class postgresql_migration_607
+    [Migration("20250120052116_postgresql_migration_938")]
+    partial class postgresql_migration_938
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,10 +41,6 @@ namespace LionTaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("BankingInfo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("BusinessDocumentationKey")
                         .IsRequired()
                         .HasColumnType("text");
@@ -58,9 +54,6 @@ namespace LionTaskManagementApp.Migrations
                     b.Property<decimal?>("CMYKWhiteColorPrice")
                         .HasColumnType("numeric");
 
-                    b.Property<bool>("ChargeTravelFeesOverLimit")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("text");
@@ -71,6 +64,9 @@ namespace LionTaskManagementApp.Migrations
 
                     b.Property<decimal>("CostPerSqrFoot")
                         .HasColumnType("numeric");
+
+                    b.Property<bool>("DoesChargeTravelFeesOverLimit")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("DoesPrintWhiteColor")
                         .HasColumnType("boolean");
@@ -88,6 +84,10 @@ namespace LionTaskManagementApp.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -126,6 +126,10 @@ namespace LionTaskManagementApp.Migrations
 
                     b.Property<decimal>("TravelFeeOverLimit")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("WallpenHubProfileLink")
                         .IsRequired()
@@ -271,15 +275,11 @@ namespace LionTaskManagementApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("IndustryInformation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text");
 

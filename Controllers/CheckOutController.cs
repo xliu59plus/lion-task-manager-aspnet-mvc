@@ -1,122 +1,69 @@
+﻿using LionTaskManagementApp.Data;
+using LionTaskManagementApp.Models;
+using LionTaskManagementApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using Stripe.Checkout;
 
-public class CheckOutController: Controller
+namespace LionTaskManagementApp.Controllers
 {
-    public IActionResult Index()
+    public class CheckoutController : Controller
     {
-        List<ProductEntity> productList = new List<ProductEntity>();
-        productList = new List<ProductEntity>{
-            new ProductEntity {
-                Product = "TH",
-                Rate = 1500,
-                Quantity=2,
-                //ImagePath="aa"
-            },
-            new ProductEntity {
-                Product = "TimeWear",
-                Rate = 1500,
-                Quantity=1,
-                // ImagePath="aa"
-            },
-        };
+        private readonly PaymentService _paymentService;
+        private readonly ApplicationDbContext _dbContext;
 
-        return View(productList);
-    }
 
-    public IActionResult Create()
-    {
-        try {
-            List<ProductEntity> productList = new List<ProductEntity>();
-            productList = new List<ProductEntity>{
-                new ProductEntity {
-                    Product = "TH",
-                    Rate = 1500,
-                    Quantity=2,
-                    //ImagePath="aa"
-                },
-                new ProductEntity {
-                    Product = "TimeWear",
-                    Rate = 1500,
-                    Quantity=1,
-                    // ImagePath="aa"
-                },
-            };
+        public CheckoutController(PaymentService paymentService, ApplicationDbContext dbContext)
+        {
+            _paymentService = paymentService;
+            _dbContext = dbContext;
+        }
 
-        var domain="https://localhost:5001";
-
-            var options = new SessionCreateOptions 
+        [HttpGet]
+        public async Task<IActionResult> PaymentSuccessful(string sessionId, int taskId)
+        {
+            var taskModel = await _dbContext.Tasks.FindAsync(taskId);
+            if (taskModel == null)
             {
-                SuccessUrl=domain + "/Checkout/OrderConfirmation",
-                CancelUrl = domain + "/Checkout/OrderConfirmation",
-                LineItems = new List<SessionLineItemOptions>(),
-                Mode="payment",
-                CustomerEmail="anyemail@gmail.com"
-            };
-
-            foreach(var item in productList) {
-                var sessionListItem = new SessionLineItemOptions {
-                    PriceData=new SessionLineItemPriceDataOptions {
-                        UnitAmount=(long)(item.Rate*item.Quantity),
-                        Currency="cad",
-                        ProductData=new SessionLineItemPriceDataProductDataOptions {
-                            Name=item.Product.ToString(),
-                        }
-                    },
-                    Quantity=item.Quantity
-                };
-
-                options.LineItems.Add(sessionListItem);
+                return NotFound();
             }
 
-            var service = new SessionService();
-            Session session=service.Create(options);
-            TempData["Session"] = session.Id;
-            Response.Headers.Append("Locaiton", session.Url);
-            return new StatusCodeResult(303);
+            var session = await _paymentService.GetPaymentDetailsAsync(sessionId);
 
-        // var options = new SessionCreateOptions
-        //     {
-        //         LineItems = new List<SessionLineItemOptions>
-        //         {
-        //           new SessionLineItemOptions
-        //           {
-        //             // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        //             Price = "price_1QGpPuG49cs2m96oq0bchV3W",
-        //             Quantity = 1,
-        //           },
-        //         },
-        //         Mode = "payment",
-        //         SuccessUrl = domain + "/Checkout/OrderConfirmation",
-        //         CancelUrl = domain + "/Checkout/OrderConfirmation",
-        //     };
-        //     var service = new SessionService();
-        //     Session session = service.Create(options);
+            ViewBag.Message = "Payment successful. Contractor will start working.";
+            ViewBag.PaymentDetails = session;
 
-        //     Response.Headers.Add("Location", session.Url);
-        //     return new StatusCodeResult(303);
-        } catch (Exception e) {
-            Console.WriteLine(e.Message);
-            return new StatusCodeResult(303);
-        }
-    }
+            taskModel.Status = MyTaskStatus.ReadyToStart.ToString();
+            taskModel.PaymentSessionId = sessionId;
+            taskModel.PaymentIntentId = session.PaymentIntentId;
+            _dbContext.Tasks.Update(taskModel);
+            await _dbContext.SaveChangesAsync();
 
-    public IActionResult OrderConfirmation() 
-    {
-        var service = new SessionService();
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var sessionId = TempData["Session"] == null? "": TempData["Session"].ToString();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-        Session session = service.Get(sessionId);
-        ViewBag.OrderID = "sample order ID";
-        ViewBag.Amount = 1000;
-        ViewBag.PaymentMethod = "Sample Payment method";
-        if(session.PaymentStatus == "Paid") {
-            return View("payment-succeed");
-        } else {
-            return View("payment-failed");
+            return View(taskModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> PaymentFailed(string sessionId, int taskId)
+        {
+            var taskModel = await _dbContext.Tasks.FindAsync(taskId);
+            if (taskModel == null)
+            {
+                return NotFound();
+            }
+
+            var session = await _paymentService.GetPaymentDetailsAsync(sessionId);
+            if (session.PaymentStatus != "failed")
+            {
+                return BadRequest("Invalid payment status.");
+            }
+
+            taskModel.Status = MyTaskStatus.Initialized.ToString();
+            taskModel.TakenById = null;
+            _dbContext.Tasks.Update(taskModel);
+            await _dbContext.SaveChangesAsync();
+
+            ViewBag.Message = "Payment failed.";
+
+            return View(taskModel);
+        }
     }
 }

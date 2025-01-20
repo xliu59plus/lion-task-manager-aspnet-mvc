@@ -22,18 +22,15 @@ namespace LionTaskManagementApp.Controllers
         private readonly S3Service _s3Service;
         private readonly NotificationHubService _notificationHubService;
         private readonly IServiceProvider _serviceProvider;
-        private readonly int BATCH_TO_NOTIFY = 1;
-        private readonly int INTERVAL_TO_NOTIFY = 120; // in seconds
-
-
-        
+        private readonly PaymentService _paymentService;
 
         public PosterController(ApplicationDbContext context,
                                 UserManager<TaskUser> userManager,
                                 SignInManager<TaskUser> signInManager,
                                 S3Service s3Service,
                                 NotificationHubService notificationHubService,
-                                IServiceProvider serviceProvider)
+                                IServiceProvider serviceProvider,
+                                PaymentService paymentService)
         {
             _context = context;
             _userManager = userManager;
@@ -41,6 +38,7 @@ namespace LionTaskManagementApp.Controllers
             _s3Service = s3Service;
             _notificationHubService = notificationHubService;
             _serviceProvider = serviceProvider;
+            _paymentService = paymentService;
         }
 
         [Authorize(Roles = "Poster,Admin")]
@@ -86,6 +84,7 @@ namespace LionTaskManagementApp.Controllers
         public async Task<IActionResult> TaskCreate(TaskModel taskModel)
         {
             ModelState.Remove("Status");
+            ModelState.Remove("PaymentSessionId");
             if (!ModelState.IsValid)
             {
                 foreach (var modelState in ModelState.Values)
@@ -165,9 +164,10 @@ namespace LionTaskManagementApp.Controllers
                 await _context.SaveChangesAsync(); // please check whether the taskModel has an id.
 
                 // Push Notification to TaskTakers.
-                var currentUserId = User.Identity?.Name;
+                var currentUsername = User.Identity?.Name;
+                var currUser = await _userManager.FindByNameAsync(currentUsername);
                 var notificationBackgroundService = _serviceProvider.GetRequiredService<NotificationBackgroundService>();
-                notificationBackgroundService.QueueNotification(taskModel, currentUserId);
+                notificationBackgroundService.QueueNotification(taskModel, currUser.Id);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -372,8 +372,7 @@ namespace LionTaskManagementApp.Controllers
                     var modelToStore = new PosterInfo
                     {
                         PosterId = user.Id,
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
+                        FullName = model.FirstName + model.LastName,
                         PhoneNumber = model.PhoneNumber,
                         CompanyName = model.CompanyName,
                         AddressLine1 = model.AddressLine1,
@@ -486,11 +485,11 @@ namespace LionTaskManagementApp.Controllers
 
         [Authorize(Roles = "Poster,Admin")]
         // GET: Poster/ApproveRequest
-        public async Task<IActionResult> ApproveRequest(int taskId, string username)
+        public async Task<IActionResult> ConfirmRequest(int taskId, string applicantId, decimal cost)
         {
             Console.WriteLine("ApproveRequest hit");
 
-            if (username == null)
+            if (applicantId == null)
             {
                 return NotFound();
             }
@@ -501,10 +500,15 @@ namespace LionTaskManagementApp.Controllers
                 return NotFound();
             }
 
-            taskModel.TakenById = username;
-
+            taskModel.TakenById = applicantId;
+            taskModel.Status = MyTaskStatus.PaymentProcessing.ToString();
             _context.SaveChanges();
-            return RedirectToAction("TaskDetails", "Poster", new { id = taskId });
+
+            var paymentSession = await _paymentService.CreatePayment(taskModel, cost);
+
+            TempData["PaymentSession"] = paymentSession.Id;
+            Response.Headers.Add("Location", paymentSession.Url);
+            return new StatusCodeResult(303);
         }
 
 
@@ -524,9 +528,48 @@ namespace LionTaskManagementApp.Controllers
             return RedirectToAction("TaskDetails", "Poster", new { id = taskId });
         }
 
+        [Authorize(Roles = "Poster,Admin")]
+        public async Task<IActionResult> ViewApplicantDetail(string applicantId, int taskId)
+        {
+            // Get contractor info
+            var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(u => u.UserId.Equals(applicantId));
+            var taskModel = await _context.Tasks.FindAsync(taskId);
+
+            if (contractorInfo == null || taskModel == null)
+            {
+                return NotFound();
+            }
+
+            // Calculate distance
+            double distance = DistanceCalculator.GetDistanceInMiles(contractorInfo.Latitude, contractorInfo.Longitude, taskModel.Latitude, taskModel.Longitude);
+
+            // Calculate cost
+            double area = taskModel.Length * taskModel.Height;
+            decimal cost = contractorInfo.CostPerSqrFoot * (decimal)area;
+
+            // Create a view model to pass to the view
+            var viewModel = new ApplicantDetailViewModel
+            {
+                ContractorInfo = contractorInfo,
+                Distance = distance,
+                Cost = cost,
+                TaskId = taskModel.Id
+            };
+
+            return View("ApplicantDetail", viewModel);
+        }
+
         private bool TaskModelExists(int id)
         {
             return _context.Tasks.Any(e => e.Id == id);
         }
+    }
+
+    public class ApplicantDetailViewModel
+    {
+        public ContractorInfo ContractorInfo { get; set; }
+        public double Distance { get; set; }
+        public decimal Cost { get; set; }
+        public int TaskId { get; set; }
     }
 }

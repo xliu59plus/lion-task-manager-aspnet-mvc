@@ -1,0 +1,11 @@
+﻿@model LionTaskManagementApp.Models.TaskModel
+
+@{
+    ViewBag.Title = "Payment Failed";
+}
+
+<div class="alert alert-danger">
+    @ViewBag.Message
+</div>
+
+<a href="@Url.Action("TaskDetails", "Poster", new { id = Model.Id })" class="btn btn-primary">Task Details</a>

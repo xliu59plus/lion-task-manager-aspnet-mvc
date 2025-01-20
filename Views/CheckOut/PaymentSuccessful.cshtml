@@ -1,0 +1,27 @@
+﻿@model LionTaskManagementApp.Models.TaskModel
+
+@{
+    ViewBag.Title = "Payment Successful";
+}
+
+<div class="alert alert-success">
+    @ViewBag.Message
+</div>
+
+<h2>Payment Details</h2>
+<ul>
+    <li>Payment ID: @ViewBag.PaymentDetails.Id</li>
+    <li>Amount: @(ViewBag.PaymentDetails.AmountTotal / 100.0) @ViewBag.PaymentDetails.Currency.ToUpper()</li>
+    <li>Status: @ViewBag.PaymentDetails.PaymentStatus</li>
+</ul>
+
+<h2>Task Details</h2>
+<ul>
+    <li>Title: @Model.Title</li>
+    <li>Description: @Model.Description</li>
+    <li>Budget: @Model.Budget</li>
+    <!-- Add other task details as needed -->
+</ul>
+
+<a href="@Url.Action("TaskDetails", "Poster", new { id = Model.Id })" class="btn btn-primary">Task Details</a>
+
