@@ -33,5 +33,4 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <PackageReference Include="Stripe.net" Version="46.2.1" />
   </ItemGroup>
-
 </Project>

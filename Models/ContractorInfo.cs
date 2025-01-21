@@ -2,13 +2,13 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LionTaskManagementApp.Areas.Identity.Data
+namespace LionTaskManagementApp.Models
 {
     public class ContractorInfo
     {
         [Key]
         public string UserId { get; set; } = string.Empty; // User identifier
-        public string UserName { get; set; } = String.Empty;
+        public string UserName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
 
         // Business Information
