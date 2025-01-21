@@ -74,14 +74,14 @@
     </div>
     <div class="row mt-4">
         <div class="col-md-6">
-            <form asp-action="ApproveRequest" method="post">
-                <input type="hidden" name="id" value="@Model.UserId" />
+            <form asp-action="ApproveRequest" asp-controller="Admin" method="post">
+                <input type="hidden" name="userId" value="@Model.UserId" />
                 <button type="submit" class="btn btn-success btn-block">Approve</button>
             </form>
         </div>
         <div class="col-md-6">
-            <form asp-action="DenyRequest" method="post">
-                <input type="hidden" name="id" value="@Model.UserId" />
+            <form asp-action="DenyRequest" asp-controller="Admin" method="post">
+                <input type="hidden" name="userId" value="@Model.UserId" />
                 <div class="form-group">
                     <label for="denyComments">Deny Comments:</label>
                     <textarea name="denyComments" class="form-control" rows="3"></textarea>
@@ -91,3 +91,4 @@
         </div>
     </div>
 </div>
+

@@ -1,5 +1,6 @@
 ﻿@page
 @model RegisterModel
+@using LionTaskManagementApp.Models.Constants
 
 @{
     ViewData["Title"] = "Register";
@@ -17,7 +18,7 @@
                 <!-- Task Owner Option -->
                     <div class="d-flex justify-content-between">
                         <!-- Task Owner Option -->
-                        <input type="radio" class="btn-check" asp-for="Input.Role" value="Inactive_Poster" id="role-individual" autocomplete="off" />
+                            <input type="radio" class="btn-check" asp-for="Input.Role" value="@RoleConstants.InactivePoster" id="role-individual" autocomplete="off" />
                         <label class="btn btn-outline-primary role-card text-center p-3" for="role-individual" style="border-radius: 10px;">
                             <div class="role-icon">
                                 <img src="~/img/assets/img/task-regular-24.png" alt="Task Owner Icon" class="role-icon-img" />
@@ -27,7 +28,7 @@
                         </label>
 
                         <!-- Contractor Option -->
-                        <input type="radio" class="btn-check" asp-for="Input.Role" value="Inactive_Taker" id="role-business" autocomplete="off" />
+                            <input type="radio" class="btn-check" asp-for="Input.Role" value="@RoleConstants.InactiveTaker" id="role-business" autocomplete="off" />
                         <label class="btn btn-outline-primary role-card text-center p-3" for="role-business" style="border-radius: 10px;">
                             <div class="role-icon">
                                 <img src="~/img/assets/img/palette-regular-24.png" alt="Contractor Icon" class="role-icon-img" />

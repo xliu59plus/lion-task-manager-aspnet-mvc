@@ -5,7 +5,7 @@ namespace LionTaskManagementApp.Models.Poster
     public class PosterInfo
     {
         [Key]
-        public String PosterId { get; set; } = string.Empty;
+        public String UserId { get; set; } = string.Empty;
         public string CompanyName { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;

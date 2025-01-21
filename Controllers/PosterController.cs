@@ -372,7 +372,7 @@ namespace LionTaskManagementApp.Controllers
                 {
                     var modelToStore = new PosterInfo
                     {
-                        PosterId = user.Id,
+                        UserId = user.Id,
                         FullName = model.FirstName + model.LastName,
                         PhoneNumber = model.PhoneNumber,
                         CompanyName = model.CompanyName,
@@ -402,6 +402,12 @@ namespace LionTaskManagementApp.Controllers
 
                     _context.ActivationRequests.Add(activationRequest);
                     await _context.SaveChangesAsync();
+
+                    // Add the ActivationRequested role to the user
+                    await _userManager.AddToRoleAsync(user, RoleConstants.ActivationRequested);
+
+                    // Refresh the sign-in session
+                    await _signInManager.RefreshSignInAsync(user);
 
                     TempData["SuccessMessage"] = "Successfully sent application for activation, please wait for approval.";
                     TempData.Keep("SuccessMessage");

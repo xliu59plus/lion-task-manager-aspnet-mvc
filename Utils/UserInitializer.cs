@@ -1,4 +1,5 @@
 ﻿using LionTaskManagementApp.Areas.Identity.Data;
+using LionTaskManagementApp.Models.Constants;
 using Microsoft.AspNetCore.Identity;
 
 namespace LionTaskManagementApp.Utils
@@ -8,7 +9,16 @@ namespace LionTaskManagementApp.Utils
         public static async Task Initialize(UserManager<TaskUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             // Create roles
-            var roles = new[] { "Admin", "ViceAdmin", "Inactive_Poster", "Poster", "Inactive_Taker", "Taker" };
+            var roles = new[] { 
+                RoleConstants.Admin, 
+                RoleConstants.ViceAdmin, 
+                RoleConstants.InactivePoster, 
+                RoleConstants.Poster, 
+                @RoleConstants.InactiveTaker, 
+                @RoleConstants.Taker,
+                RoleConstants.ActivationRequested
+            };
+
             foreach (var roleName in roles)
             {
                 if (!await roleManager.RoleExistsAsync(roleName))
@@ -19,7 +29,7 @@ namespace LionTaskManagementApp.Utils
 
             // Create default admin user
             var adminEmail = "admin@mgmt.com";
-            var adminPassword = "admin123!";
+            var adminPassword = "AdminAdmin123!";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
@@ -33,7 +43,7 @@ namespace LionTaskManagementApp.Utils
 
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    await userManager.AddToRoleAsync(adminUser, RoleConstants.Admin);
                 }
                 else
                 {

@@ -95,7 +95,7 @@ public class NotificationBackgroundService : BackgroundService
                     // 3.5 add to task notificationList.
                     foreach (var entry in notificationObjects)
                     {
-                        await notificationHubService.SendMessage(entry.NotifiedUserId, "You have new task invite!");
+                        await notificationHubService.SendMessage(entry.NotifiedUserId, "You have new task invite, visit Notification Center Now!");
                         persistNotificationList.Add(new TaskNotification
                         {
                             IsRead = false,

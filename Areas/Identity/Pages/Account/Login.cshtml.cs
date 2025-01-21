@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using LionTaskManagementApp.Areas.Identity.Data;
+using LionTaskManagementApp.Models.Constants;
 
 namespace LionTaskManagementApp.Areas.Identity.Pages.Account
 {
@@ -118,15 +119,7 @@ namespace LionTaskManagementApp.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    var user = await _userManager.FindByEmailAsync(Input.Email);
-                    var roles = await _userManager.GetRolesAsync(user); 
-                    if(roles.IndexOf("Poster") != -1) {
-                        returnUrl = Url.Action("Index", "Poster");
-                        Console.WriteLine("Login as Poster");
-                    } else if(roles.IndexOf("Taker") != -1) {
-                        returnUrl = Url.Action("TakerIndex", "Taker");
-                        Console.WriteLine("Login as Taker");
-                    }
+                    returnUrl = Url.Action("Index", "Home");
 
                     return LocalRedirect(returnUrl);
                 }

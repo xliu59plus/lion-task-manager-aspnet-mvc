@@ -127,7 +127,7 @@ namespace LionTaskManagementApp.Controllers
                     UserId = user.Id,
                     UserName = user.UserName,
                     UserEmail = user.Email,
-                    RequestedRole = RoleConstants.Contractor,
+                    RequestedRole = @RoleConstants.Taker,
                     IsApproved = false,
                     RequestTime = DateTimeOffset.UtcNow,
                     LastUpdateTime = DateTimeOffset.UtcNow,
@@ -139,7 +139,13 @@ namespace LionTaskManagementApp.Controllers
 
                 TempData["SuccessMessage"] = "Successfully sent application for activation, please wait for approval.";
                 TempData.Keep("SuccessMessage");
-                }
+
+                // Add the ActivationRequested role to the user
+                await _userManager.AddToRoleAsync(user, RoleConstants.ActivationRequested);
+
+                // Refresh the sign-in session
+                await _signInManager.RefreshSignInAsync(user);
+            }
             else
             {
                 ModelState.AddModelError("", "User not found.");

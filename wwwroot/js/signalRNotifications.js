@@ -8,7 +8,7 @@
         if (currentPath === "/notification/index") {
             $("#notification-message").text("New message, please refresh").show();
         } else {
-            $("#notification-message").text("There is a new notification, please visit the notification hub").show();
+            $("#notification-message").text(message).show();
         }
     });
 

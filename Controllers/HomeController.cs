@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using LionTaskManagementApp.Models;
+using LionTaskManagementApp.Models.Constants;
 
 namespace LionTaskManagementApp.Controllers;
 
@@ -33,14 +34,14 @@ public class HomeController : Controller
     public IActionResult ViewMyTask()
     {
         // Check if the user has the role "Poster"
-        if (User.IsInRole("Poster"))
+        if (User.IsInRole(RoleConstants.Poster))
         {
             // Redirect to the PosterIndex in TasksController
             return RedirectToAction("Index", "Poster");
         }
 
-        // Check if the user has the role "Taker"
-        if (User.IsInRole("Taker"))
+        // Check if the user has the role "Contractor"
+        if (User.IsInRole(@RoleConstants.Taker))
         {
             // Redirect to the TakerIndex in TasksController
             return RedirectToAction("TakerIndex", "Taker");
@@ -53,16 +54,20 @@ public class HomeController : Controller
     public IActionResult CompleteProfile()
     {
         // Check if the user has the role "Poster"
-        if (User.IsInRole("Poster") || User.IsInRole("Taker"))
+        if(User.IsInRole(RoleConstants.Admin))
+        {
+            // Redirect to the PosterIndex in TasksController
+            return RedirectToAction("Index", "Admin");
+        } else if (User.IsInRole(RoleConstants.Poster) || User.IsInRole(@RoleConstants.Taker))
         {
             TempData["SuccessMessage"] = "You are an active user now"; 
             TempData.Keep("SuccessMessage");
             return RedirectToAction("Index", "Home");
         } 
-        else if(User.IsInRole("Inactive_Poster")) {
+        else if(User.IsInRole(RoleConstants.InactivePoster)) {
             return RedirectToAction("EditProfile", "Poster");
         } 
-        else if(User.IsInRole("Inactive_Taker")) {
+        else if(User.IsInRole(@RoleConstants.InactiveTaker)) {
             return RedirectToAction("EditProfile", "Taker");
         }
 

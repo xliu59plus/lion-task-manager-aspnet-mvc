@@ -1,5 +1,6 @@
 ﻿using LionTaskManagementApp.Areas.Identity.Data;
 using LionTaskManagementApp.Data;
+using LionTaskManagementApp.Models.Constants;
 using LionTaskManagementApp.Services.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -25,22 +26,22 @@ namespace LionTaskManagementApp.Controllers
         public async Task<IActionResult> Index()
         {
             var requests = await _context.ActivationRequests
-                .OrderBy(r => r.IsApproved)
-                .ThenBy(r => r.LastUpdateTime)
+                .Where(r => r.IsApproved == false)
+                .OrderBy(r => r.LastUpdateTime)
                 .ToListAsync();
             return View(requests);
         }
 
-        public async Task<IActionResult> ViewActivationRequestDetail(string userId, string requestRole)
+        public async Task<IActionResult> ViewActivationRequestDetail(string userId)
         {
             var request = await _context.ActivationRequests
-                .FirstOrDefaultAsync(r => r.UserId == userId && r.RequestedRole == requestRole);
+                .FirstOrDefaultAsync(r => r.UserId == userId);
             if (request == null)
             {
                 return NotFound();
             }
 
-            if (requestRole == "Contractor")
+            if (request.RequestedRole == RoleConstants.Taker)
             {
                 var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(c => c.UserId == userId);
                 if (contractorInfo == null)
@@ -49,9 +50,9 @@ namespace LionTaskManagementApp.Controllers
                 }
                 return View("ContractorActivationRequestDetail", contractorInfo);
             }
-            else if (requestRole == "Poster")
+            else if (request.RequestedRole == RoleConstants.Poster)
             {
-                var posterInfo = await _context.PosterInfos.FirstOrDefaultAsync(p => p.PosterId == userId);
+                var posterInfo = await _context.PosterInfos.FirstOrDefaultAsync(p => p.UserId == userId);
                 if (posterInfo == null)
                 {
                     return NotFound();
@@ -65,9 +66,9 @@ namespace LionTaskManagementApp.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ApproveRequest(int id)
+        public async Task<IActionResult> ApproveRequest(string userId)
         {
-            var request = await _context.ActivationRequests.FindAsync(id);
+            var request = await _context.ActivationRequests.FirstOrDefaultAsync(r => r.UserId.Equals(userId));
             if (request == null)
             {
                 return NotFound();
@@ -79,6 +80,7 @@ namespace LionTaskManagementApp.Controllers
             {
                 await _userManager.AddToRoleAsync(user, request.RequestedRole);
                 await _userManager.RemoveFromRoleAsync(user, "Inactive_" + request.RequestedRole);
+                await _userManager.RemoveFromRoleAsync(user, RoleConstants.ActivationRequested);
                 await _notificationHubService.SendMessage(user.Id, "Your profile is activated now, please logout and login again.");
             }
 
@@ -87,7 +89,7 @@ namespace LionTaskManagementApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DenyRequest(int id, string denyComments)
+        public async Task<IActionResult> DenyRequest(string id, string denyComments)
         {
             var request = await _context.ActivationRequests.FindAsync(id);
             if (request == null)

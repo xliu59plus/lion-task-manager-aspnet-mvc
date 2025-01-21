@@ -86,7 +86,7 @@
 
             connection.on("NotificationMessage", function (message) {
                 var currentPath = window.location.pathname.toLowerCase();
-                $("#notification-message").text("There is a new notification, please visit the notification hub").show();
+                $("#notification-message").text(message).show();
             });
 
             connection.start().then(function () {

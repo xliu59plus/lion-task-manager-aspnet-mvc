@@ -7,11 +7,32 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LionTaskManagementApp.Migrations
 {
     /// <inheritdoc />
-    public partial class postgresql_migration_283 : Migration
+    public partial class postgresql_migration_847 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ActivationRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    UserEmail = table.Column<string>(type: "text", nullable: false),
+                    PricePerSquareFoot = table.Column<decimal>(type: "numeric", nullable: false),
+                    RequestedRole = table.Column<string>(type: "text", nullable: false),
+                    IsApproved = table.Column<bool>(type: "boolean", nullable: false),
+                    RequestTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastUpdateTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    DenyComents = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivationRequests", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -78,7 +99,7 @@ namespace LionTaskManagementApp.Migrations
                     CMYKWhiteColorPrice = table.Column<decimal>(type: "numeric", nullable: true),
                     PreferenceDistance = table.Column<decimal>(type: "numeric", nullable: false),
                     TravelFeeOverLimit = table.Column<decimal>(type: "numeric", nullable: false),
-                    ChargeTravelFeesOverLimit = table.Column<bool>(type: "boolean", nullable: false),
+                    DoesChargeTravelFeesOverLimit = table.Column<bool>(type: "boolean", nullable: false),
                     ArtworkSpecialization = table.Column<string>(type: "text", nullable: false),
                     FullAddress = table.Column<string>(type: "text", nullable: false),
                     FirstLine = table.Column<string>(type: "text", nullable: false),
@@ -118,7 +139,7 @@ namespace LionTaskManagementApp.Migrations
                 name: "PosterInfos",
                 columns: table => new
                 {
-                    PosterId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: false),
                     FullName = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
@@ -132,7 +153,7 @@ namespace LionTaskManagementApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PosterInfos", x => x.PosterId);
+                    table.PrimaryKey("PK_PosterInfos", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -186,7 +207,9 @@ namespace LionTaskManagementApp.Migrations
                     WallType = table.Column<string>(type: "text", nullable: true),
                     DowngradeResolution = table.Column<bool>(type: "boolean", nullable: false),
                     WallPicKey = table.Column<string>(type: "text", nullable: true),
-                    ArtworkKey = table.Column<string>(type: "text", nullable: true)
+                    ArtworkKey = table.Column<string>(type: "text", nullable: true),
+                    PaymentSessionId = table.Column<string>(type: "text", nullable: false),
+                    PaymentIntentId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -340,6 +363,9 @@ namespace LionTaskManagementApp.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActivationRequests");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
