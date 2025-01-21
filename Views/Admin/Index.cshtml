@@ -1,31 +1,30 @@
-@* @model IEnumerable<LionTaskManagementApp.Models.ContractorInfo>
+@model IEnumerable<LionTaskManagementApp.Models.ActivationRequest>
 
 <h2>Pending Approvals</h2>
 <table class="table">
     <thead>
         <tr>
-            <th>Company Name</th>
-            <th>Submitted By</th>
+            <th>User Name</th>
+            <th>User Email</th>
+            <th>Requested Role</th>
+            <th>Request Time</th>
+            <th>Last Update Time</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @foreach (var request in Model)
         {
             <tr>
-                <td>@user.CompanyName</td>
-                <td>@user.UserId</td>
+                <td>@request.UserName</td>
+                <td>@request.UserEmail</td>
+                <td>@request.RequestedRole</td>
+                <td>@request.RequestTime</td>
+                <td>@request.LastUpdateTime</td>
                 <td>
-                    <form asp-action="ApproveUser" method="post">
-                        <input type="hidden" name="userId" value="@user.UserId" />
-                        <button type="submit" class="btn btn-success">Approve</button>
-                    </form>
-                    <form asp-action="RejectUser" method="post">
-                        <input type="hidden" name="userId" value="@user.UserId" />
-                        <button type="submit" class="btn btn-danger">Reject</button>
-                    </form>
+                    <a asp-action="ViewActivationRequestDetail" asp-controller="Admin" asp-route-userId="@request.UserId" asp-route-requestRole="@request.RequestedRole" class="btn btn-info">View Detail</a>
                 </td>
             </tr>
         }
     </tbody>
-</table> *@
+</table>

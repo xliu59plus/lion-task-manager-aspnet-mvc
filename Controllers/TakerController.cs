@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using NuGet.Packaging.Signing;
 using Stripe;
 using LionTaskManagementApp.Services;
+using LionTaskManagementApp.Models.Constants;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -32,170 +33,121 @@ namespace LionTaskManagementApp.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[Authorize(Roles="Taker, Inactive_Taker, Admin")]  
-        // public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model) 
-        // {
-        //     var user = await _userManager.GetUserAsync(User);
-        //     if (user != null)
-        //     {
-        //         // 1. Update ContractorInfo
-        //         var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(c => c.UserId == user.Id);
-        //         if (contractorInfo == null)
-        //         {
-        //             contractorInfo = new ContractorInfo { UserId = user.Id };
-        //             _context.ContractorInfos.Add(contractorInfo);
-        //         }
-        //         contractorInfo.CostPerSqrFoot = model.PricePerSquareFoot;
-        //         contractorInfo.ZipCode = model.ZipCode;
-        //         contractorInfo.PreferenceDistance = model.PreferenceDistance;
-
-        //         var fullAddr = model.FirstLine + " "
-        //                         + model.SecondLine + " "
-        //                         + model.City + " "
-        //                         + model.StateProvince
-        //                         + model.ZipCode;
-        //         contractorInfo.FullAddress = fullAddr;
-        //         contractorInfo.LatAndLongitude = model.LatAndLongitude;
-
-        //         var roles = await _userManager.GetRolesAsync(user);
-        //         var resultRemove = await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
-        //         var resultAdd = await _userManager.AddToRoleAsync(user, "Taker");
-        //         await _context.SaveChangesAsync(); 
-        //         await _context.Entry(user).ReloadAsync();
-        //         await _signInManager.RefreshSignInAsync(user); 
-                    
-        //         TempData["SuccessMessage"] = "You are an active user now";
-        //         TempData.Keep("SuccessMessage");
-        //     }
-
-        //     return RedirectToAction("Index", "Home"); 
-        // }
         [HttpPost]
-[Authorize(Roles = "Taker, Inactive_Taker, Admin")]
-public async Task<IActionResult> EditProfileTaker(ContractorInfoViewModel model,IFormFile BusinessDocumentationUpload)
-{
-    Console.WriteLine("Check if businessDocumentationUpload is null : " + BusinessDocumentationUpload == null);
-    Console.WriteLine(BusinessDocumentationUpload);
-
-    var user = await _userManager.GetUserAsync(User);
-    if (user != null)
-    {
-        // 1. Update ContractorInfo
-        var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(c => c.UserId == user.Id);
-        if (contractorInfo == null)
+        [Authorize(Roles = "Taker, Inactive_Taker, Admin")]
+        public async Task<IActionResult> CreateProfileTaker(ContractorInfoViewModel model,IFormFile BusinessDocumentationUpload)
         {
-            contractorInfo = new ContractorInfo { UserId = user.Id };
-            _context.ContractorInfos.Add(contractorInfo);
-        }
-        // Handle file upload for BusinessDocumentation
-       // Handle file upload for BusinessDocumentation
-        if (BusinessDocumentationUpload != null && BusinessDocumentationUpload.Length > 0)
-        {
-            // Validate file type (only PDF or images allowed)
-            if (!BusinessDocumentationUpload.ContentType.StartsWith("application/pdf") &&
-                !BusinessDocumentationUpload.ContentType.StartsWith("image/"))
+            Console.WriteLine("Check if businessDocumentationUpload is null : " + BusinessDocumentationUpload == null);
+            Console.WriteLine(BusinessDocumentationUpload);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
             {
-                ModelState.AddModelError("BusinessDocumentationUpload", "Only PDF or image files are allowed.");
-                return View(model); // Return to the form with an error message
-            }
+                // 1. Update ContractorInfo
+                var contractorInfo = await _context.ContractorInfos.FirstOrDefaultAsync(c => c.UserId == user.Id);
+                if (contractorInfo == null)
+                {
+                    contractorInfo = new ContractorInfo { UserId = user.Id };
+                    _context.ContractorInfos.Add(contractorInfo);
+                }
+                // Handle file upload for BusinessDocumentation
+               // Handle file upload for BusinessDocumentation
+                if (BusinessDocumentationUpload != null && BusinessDocumentationUpload.Length > 0)
+                {
+                    // Validate file type (only PDF or images allowed)
+                    if (!BusinessDocumentationUpload.ContentType.StartsWith("application/pdf") &&
+                        !BusinessDocumentationUpload.ContentType.StartsWith("image/"))
+                    {
+                        ModelState.AddModelError("BusinessDocumentationUpload", "Only PDF or image files are allowed.");
+                        return View(model); // Return to the form with an error message
+                    }
 
-            // Validate file size (maximum 5 MB)
-            if (BusinessDocumentationUpload.Length > 5 * 1024 * 1024) // 5 MB limit
+                    // Validate file size (maximum 5 MB)
+                    if (BusinessDocumentationUpload.Length > 5 * 1024 * 1024) // 5 MB limit
+                    {
+                        ModelState.AddModelError("BusinessDocumentationUpload", "File size must not exceed 5 MB.");
+                        return View(model); // Return to the form with an error message
+                    }
+
+                    // If validation passes, proceed with file upload
+                    // 1. Create a temporary file
+                    string tempFilePath = Path.GetTempFileName();
+
+                    // 2. Save the uploaded file to the temporary location
+                    using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                    {
+                        await BusinessDocumentationUpload.CopyToAsync(stream);
+                    }
+
+                    // 3. Upload to S3 from the temporary file
+                    string key = $"artworks/{Guid.NewGuid()}_{BusinessDocumentationUpload.FileName}";
+                    await _s3Service.UploadFileAsync(tempFilePath, key);
+
+                    // 4. Get the pre-signed URL
+                    string uploadedArtworkUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
+                    contractorInfo.BusinessDocumentationKey = key;
+
+                    // 5. Delete the temporary file
+                    System.IO.File.Delete(tempFilePath);
+                }
+
+                // Update ContractorInfo fields from the model
+                var currentUser = await _userManager.GetUserAsync(User);  
+                contractorInfo.ZipCode = model.ZipCode;
+                contractorInfo.PreferenceDistance = model.MaxTravelDistanceMiles;
+                contractorInfo.FirstLine = model.FirstLine;
+                contractorInfo.SecondLine = model.SecondLine;
+                contractorInfo.City = model.City;
+                contractorInfo.StateProvince = model.StateProvince;
+                contractorInfo.CompanyName = model.CompanyName;
+                contractorInfo.EIN = model.EIN;
+                contractorInfo.FacebookLink = model.FacebookLink;
+                contractorInfo.InstagramLink = model.InstagramLink;
+                contractorInfo.TikTokLink = model.TikTokLink;
+                contractorInfo.WallpenHubProfileLink = model.WallpenHubProfileLink;
+                contractorInfo.ArtworkSpecialization = model.ArtworkSpecialization;
+                contractorInfo.DoesPrintWhiteColor = model.DoesPrintWhiteColor;
+                contractorInfo.SupportsCMYK = model.SupportsCMYK;
+                contractorInfo.WallpenMachineModel = model.WallpenMachineModel;
+                contractorInfo.WallpenSerialNumber = model.WallpenSerialNumber;
+                contractorInfo.DoesChargeTravelFeesOverLimit = model.DoesChargeTravelFeesOverLimit;
+                contractorInfo.TravelFeeOverLimit = model.TravelFeeOverLimit;
+                contractorInfo.Longitude = model.Longitude;
+                contractorInfo.Latitude = model.Latitude;
+                contractorInfo.CostPerSqrFoot = model.CMYKWhiteColorPrice ?? 0;
+
+                // Pricing field
+                contractorInfo.CMYKPrice = model.CMYKPrice;
+                contractorInfo.WhiteColorPrice = model.WhiteColorPrice;
+                contractorInfo.CMYKWhiteColorPrice = model.CMYKWhiteColorPrice;
+
+                // Create a new ActivationRequest
+                var activationRequest = new ActivationRequest
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    UserEmail = user.Email,
+                    RequestedRole = RoleConstants.Contractor,
+                    IsApproved = false,
+                    RequestTime = DateTimeOffset.UtcNow,
+                    LastUpdateTime = DateTimeOffset.UtcNow,
+                    DenyComents = string.Empty
+                };
+
+                _context.ActivationRequests.Add(activationRequest);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Successfully sent application for activation, please wait for approval.";
+                TempData.Keep("SuccessMessage");
+                }
+            else
             {
-                ModelState.AddModelError("BusinessDocumentationUpload", "File size must not exceed 5 MB.");
-                return View(model); // Return to the form with an error message
-            }
-
-            // If validation passes, proceed with file upload
-            // 1. Create a temporary file
-            string tempFilePath = Path.GetTempFileName();
-
-            // 2. Save the uploaded file to the temporary location
-            using (var stream = new FileStream(tempFilePath, FileMode.Create))
-            {
-                await BusinessDocumentationUpload.CopyToAsync(stream);
-            }
-
-            // 3. Upload to S3 from the temporary file
-            string key = $"artworks/{Guid.NewGuid()}_{BusinessDocumentationUpload.FileName}";
-            await _s3Service.UploadFileAsync(tempFilePath, key);
-
-            // 4. Get the pre-signed URL
-            string uploadedArtworkUrl = await _s3Service.GetPreSignedUrlAsync(key, TimeSpan.FromMinutes(10));
-            contractorInfo.BusinessDocumentationKey = key;
-
-            // 5. Delete the temporary file
-            System.IO.File.Delete(tempFilePath);
-        }
-
-
-        // Update ContractorInfo fields from the model
-        var currentUser = await _userManager.GetUserAsync(User);  
-        contractorInfo.ZipCode = model.ZipCode;
-        contractorInfo.PreferenceDistance = model.MaxTravelDistanceMiles;
-        contractorInfo.FirstLine = model.FirstLine;
-        contractorInfo.SecondLine = model.SecondLine;
-        contractorInfo.City = model.City;
-        contractorInfo.StateProvince = model.StateProvince;
-        contractorInfo.CompanyName = model.CompanyName;
-        contractorInfo.EIN = model.EIN;
-        contractorInfo.FacebookLink = model.FacebookLink;
-        contractorInfo.InstagramLink = model.InstagramLink;
-        contractorInfo.TikTokLink = model.TikTokLink;
-        contractorInfo.WallpenHubProfileLink = model.WallpenHubProfileLink;
-        contractorInfo.ArtworkSpecialization = model.ArtworkSpecialization;
-        contractorInfo.DoesPrintWhiteColor = model.DoesPrintWhiteColor;
-        contractorInfo.SupportsCMYK = model.SupportsCMYK;
-        contractorInfo.WallpenMachineModel = model.WallpenMachineModel;
-        contractorInfo.WallpenSerialNumber = model.WallpenSerialNumber;
-        contractorInfo.DoesChargeTravelFeesOverLimit = model.DoesChargeTravelFeesOverLimit;
-        contractorInfo.TravelFeeOverLimit = model.TravelFeeOverLimit;
-        contractorInfo.Longitude = model.Longitude;
-        contractorInfo.Latitude = model.Latitude;
-        contractorInfo.CostPerSqrFoot = model.CMYKWhiteColorPrice ?? 0;
-
-        // Pricing field
-        contractorInfo.CMYKPrice = model.CMYKPrice;
-        contractorInfo.WhiteColorPrice = model.WhiteColorPrice;
-        contractorInfo.CMYKWhiteColorPrice = model.CMYKWhiteColorPrice;
-
-        // Update user roles to "Taker"
-        var roles = await _userManager.GetRolesAsync(user);
-        var resultRemove = await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
-        if (resultRemove.Succeeded)
-        {
-            var resultAdd = await _userManager.AddToRoleAsync(user, "Taker");
-            if (!resultAdd.Succeeded)
-            {
-                ModelState.AddModelError("", "Failed to assign role 'Taker'.");
+                ModelState.AddModelError("", "User not found.");
                 return View(model); // Return to the form with validation errors
             }
+
+            return RedirectToAction("Index", "Home");
         }
-        else
-        {
-            ModelState.AddModelError("", "Failed to remove previous roles.");
-            return View(model); // Return to the form with validation errors
-        }
-
-        // Save changes to the database
-        await _context.SaveChangesAsync();
-
-        // Reload user data and refresh sign-in
-        await _context.Entry(user).ReloadAsync();
-        await _signInManager.RefreshSignInAsync(user);
-
-        TempData["SuccessMessage"] = "You are an active user now";
-        TempData.Keep("SuccessMessage");
-    }
-    else
-    {
-        ModelState.AddModelError("", "User not found.");
-        return View(model); // Return to the form with validation errors
-    }
-
-    return RedirectToAction("Index", "Home");
-}
 
 
         // GET: Tasks

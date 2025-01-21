@@ -19,6 +19,7 @@
         <!-- Show "My Tasks" button if the user is logged in and has the "Poster" or "Taker" role -->
         if(User.IsInRole("Poster") || User.IsInRole("Taker")) {
             <a href="@Url.Action("ViewMyTask", "Home")" class="btn btn-primary mt-4">My Tasks</a>
+            <a href="@Url.Action("Index", "Notification")" class="btn btn-secondary mt-4">Notification Center</a>
         } else if(User.IsInRole("Inactive_Poster") || User.IsInRole("Inactive_Taker")){
             <div class="alert alert-warning">
                 Please complete your profile for activation

@@ -11,6 +11,7 @@ using LionTaskManagementApp.Utils;
 using LionTaskManagementApp.Services.Hubs;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using LionTaskManagementApp.Models.Constants;
 
 namespace LionTaskManagementApp.Controllers
 {
@@ -362,7 +363,7 @@ namespace LionTaskManagementApp.Controllers
 
         [HttpPost]
         [Authorize(Roles="Poster, Inactive_Poster, Admin")]   
-        public async Task<IActionResult> EditProfilePoster(PosterInfoViewModel model)
+        public async Task<IActionResult> CreateProfilePoster(PosterInfoViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -387,37 +388,23 @@ namespace LionTaskManagementApp.Controllers
                     _context.PosterInfos.Add(modelToStore);
                     await _context.SaveChangesAsync();
 
-                    var roles = await _userManager.GetRolesAsync(user);
-                    var resultRemove = await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
-                    var resultAdd = await _userManager.AddToRoleAsync(user, "Poster");
-
-                    if (resultRemove.Succeeded && resultAdd.Succeeded)
+                    var activationRequest = new ActivationRequest
                     {
-                        await _context.SaveChangesAsync();
+                        UserId = user.Id,
+                        UserName = user.UserName,
+                        UserEmail = user.Email,
+                        RequestedRole = RoleConstants.Poster,
+                        IsApproved = false,
+                        RequestTime = DateTimeOffset.UtcNow,
+                        LastUpdateTime = DateTimeOffset.UtcNow,
+                        DenyComents = string.Empty
+                    };
 
-                        // 1. Refresh the user object from the database
-                        await _context.Entry(user).ReloadAsync();
+                    _context.ActivationRequests.Add(activationRequest);
+                    await _context.SaveChangesAsync();
 
-                        // 2. Update the user's claims principal 
-                        await _signInManager.RefreshSignInAsync(user);
-
-                        TempData["SuccessMessage"] = "You are an active user now";
-                        TempData.Keep("SuccessMessage");
-                    }
-                    else
-                    {
-                        // Handle role update failures (e.g., log errors, display a message)
-                        foreach (var error in resultRemove.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                        foreach (var error in resultAdd.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                        // You might want to return to the edit view with error messages
-                        return View(); // Or return View("YourEditViewName"); 
-                    }
+                    TempData["SuccessMessage"] = "Successfully sent application for activation, please wait for approval.";
+                    TempData.Keep("SuccessMessage");
                 }
                 else
                 {

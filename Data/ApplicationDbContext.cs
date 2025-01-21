@@ -18,4 +18,5 @@ public class ApplicationDbContext : IdentityDbContext<TaskUser>
     public DbSet<PosterInfo> PosterInfos { get; set; }
     public DbSet<TaskNotification> TaskNotifications { get; set; }
     public DbSet<CreateTaskNotificationQueueModel> CreateTaskNotificationQueueModels { get; set; }
+    public DbSet<ActivationRequest> ActivationRequests { get; set; }
 }
